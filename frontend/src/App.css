@@ -1,0 +1,68 @@
+
+@keyframes inchWorm {
+  0% {
+      transform: translateX(0);
+  }
+  20% {
+      transform: translateX(10px) scaleY(1.2);
+  }
+  40% {
+      transform: translateX(20px) scaleY(0.9);
+  }
+  60% {
+      transform: translateX(30px) scaleY(1.1);
+  }
+  80% {
+      transform: translateX(40px) scaleY(0.95);
+  }
+  100% {
+      transform: translateX(50px);
+  }
+}
+
+.animate-inch-worm {
+  animation: inchWorm 2s ease-in-out infinite;
+  display: inline-block; /* For smooth animation */
+}
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: palevioletred;
+  padding-bottom: 0px;
+}
+  /* Typewriter Animation */
+  /* Typewriter Animation */
+  @keyframes typewriter {
+      0% {
+          width: 0;
+      }
+      100% {
+          width: 100%;
+      }
+  }
+
+  /* Cursor Animation */
+  @keyframes blink {
+      0% {
+          border-right-color: transparent;
+      }
+      50% {
+          border-right-color: rgb(7, 7, 7);
+      }
+      100% {
+          border-right-color: transparent;
+      }
+  }
+
+  .new-arrivals-typewriter {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid rgb(0, 0, 0); /* Cursor */
+      width: 0;
+      animation: typewriter 2s steps(20) infinite, blink 0.75s step-end infinite;
+  }

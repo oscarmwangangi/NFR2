@@ -1,0 +1,55 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+.babelrc
+.eslintcache
+coverage/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Package manager lock files (if using yarn or npm)
+package-lock.json
+yarn.lock
+
+# IDE or editor settings
+.vscode/
+.idea/
+
+
+
+# REACT_APP_BACKEND_URL=http://localhost:5000
+
+# REACT_APP_API_URL=http://localhost:5000/api
+
+# # JWT Secret (for signing JWT tokens)
+# JWT_SECRET=3e71f3fe1ef0113553776f946ed818150317b9cd282141494f4d8690b7bd06a829b13dbfa4e251d828aed497ec4a59d4f1cac8d00c54f3e47d539794119a0acb
+
+# # Google OAuth2 Client ID (for Google authentication)
+# # GOOGLE_CLIENT_ID=your_google_client_id
+# # GOOGLE_CLIENT_ID="919809176398-cgg39cb5vibn6vobfeua21s5e1m1375i.apps.googleusercontent.com"
+# # GOOGLE_CLIENT_SECRET="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"
+# GOOGLE_CLIENT_ID="331450312488-lavpfaas8tgdpjk2ij7tnns8hl5j732h.apps.googleusercontent.com"
+# GOOGLE_CLIENT_SECRET="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"
+# # Email credentials for sending OTPs (via Nodemailer)
+# EMAIL_USER=mwangangioscar2016@gmail.com
+# EMAIL_PASS=8964"Mutura"
