@@ -1,40 +1,58 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import productController from './backend/controllers/productController.js';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import session from 'express-session';
+import passport from 'passport';
+import productController from './backend/controllers/productController.js';
+
 import multer from 'multer';
 import {upload} from './backend/multer.js'
 const app = express();
 import path from 'path';
 import { fileURLToPath } from 'url';
-import LoginRoutes from './backend/LoginRoutes/LoginRoutes.js';  // Import the LoginRoutes module
-// import './passport.js'; 
-import session from 'express-session';
-import passport from 'passport';
+  // Import the LoginRoutes module
+
 import cookieParser from 'cookie-parser';
 const PORT = 5000;
 
 // Correct import statement
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 // Get the current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Your frontend URL
+    credentials: true, // Allow cookies/session
+  })
+);
+
 app.use(session({
   secret: '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',  // Replace with a strong secret
   resave: false,
-  saveUninitialized: true,  // Add a comma here
-  cookie: { secure: false } // Set to true if using HTTPS
+  saveUninitialized: true,  
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Use only over HTTPS in production
+    sameSite: 'lax', // Helps with CSRF protection
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  }
 }));
 
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+import LoginRoutes from './backend/LoginRoutes/LoginRoutes.js';
+// import LoginRoutes2 from './backend/LoginRoutes/LoginRoutes2.js';
 // Sample API endpoint
+
+app.use('/api', LoginRoutes);
+// app.use('/api', LoginRoutes2);
 app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 app.get('/api/data', (req, res) => {
@@ -58,7 +76,7 @@ app.delete('/api/products/:id', productController.deleteProduct); // Delete prod
 app.put("/api/categories/:id",  productController.updateCategory);
 app.delete("/api/categories/:id",  productController.deleteCategory);
 
-app.use('/api', LoginRoutes);
+
 // Express serves the frontend React app in production (explained below)
 
 

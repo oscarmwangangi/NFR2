@@ -7,6 +7,7 @@ import db from '../../config/db.js';  // Use ES6 import
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import crypto from 'crypto'
+import { Strategy as LocalStrategy } from 'passport-local';
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -42,7 +43,7 @@ async function sendOTPEmail(email, otp) {
   }
 }
 
-// Google OAuth login route
+
 // Google Auth route (initiate login)
 router.get('/auth/google', (req, res, next) => {
   console.log('Initiating Google OAuth...');
@@ -56,10 +57,15 @@ router.get('/auth/google/callback', (req, res, next) => {
   next();
 }, passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
   console.log('Google OAuth successful, redirecting to /dashboard');
-  res.redirect('http://localhost:3000/dashboard');
+  res.redirect('http://localhost:3000');
 });
 
 // Google OAuth Strategy configuration
+
+
+
+
+
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -104,6 +110,7 @@ passport.use(new GoogleStrategy({
   }
 }));
 
+
 // Serialize user into the session
 passport.serializeUser((user, done) => {
   // Ensure the user object has an 'id' property
@@ -116,24 +123,25 @@ passport.serializeUser((user, done) => {
 
 // Deserialize user from the session
 passport.deserializeUser(async (id, done) => {
+  console.log("Deserializing user with id:", id);  // Log the id passed to deserialize
   try {
     const [user] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
     if (user.length > 0) {
-      done(null, user[0]); // Pass the full user object back
+      console.log("User found:", user[0]);  // Log the user object found from DB
+      done(null, user[0]);  // Pass the user back into the session
     } else {
+      console.log("User not found in database with id:", id);
       done(new Error('User not found'), null);
     }
   } catch (error) {
+    console.error("Error during deserialization:", error);
     done(error, null);
   }
 });
 
 
+// Register route
 
-// Register route
-// Register route
-// Register route
-// Register route (POST request)
 router.post('/register', async (req, res) => {
     const { email, password, first_name, second_name } = req.body;
   
@@ -236,77 +244,127 @@ router.post('/register', async (req, res) => {
   });
   
 
-  
-  
-  
-  
-  
- 
-
-
-// POST route to handle login
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    console.log("Received request body:", req.body); // Debugging line
-    
-    if (!email || !password) {
-        return res.status(400).send({ message: "Email and password are required" });
-    }
-
-    try {
+passport.use(
+  new LocalStrategy(
+    { usernameField: 'email' },
+    async (email, password, done) => {
+      try {
         const [user] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
         if (user.length === 0) {
-            return res.status(400).send({ message: "Invalid email or password" });
+          return done(null, false, { message: "Invalid email or password" });
         }
 
         const isMatch = await bcrypt.compare(password, user[0].password);
-
         if (!isMatch) {
-            return res.status(400).send({ message: "Invalid email or password" });
+          return done(null, false, { message: "Invalid email or password" });
         }
 
-        // Generate OTP and save to the database
-        const otp = generateOTP();
-        await db.query("INSERT INTO otp_verification (email, otp) VALUES (?, ?)", [email, otp]);
-
-        // Send OTP email
-        await sendOTPEmail(email, otp);
-
-        // Respond with a message indicating OTP has been sent
-        res.status(200).send({ message: "Login successful. Please check your email for the OTP." });
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).send({ message: "Server error" });
+        return done(null, user[0]);
+      } catch (error) {
+        return done(error);
+      }
     }
+  )
+);
+// Passport session setup.
+// Serialize the user instance to the session by user id.
+
+
+
+// POST route to handle login
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', async (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(400).send({ message: info.message });
+    }
+
+    try {
+      // Generate OTP and save to the database
+      const otp = generateOTP();
+      await db.query("INSERT INTO otp_verification (email, otp) VALUES (?, ?)", [user.email, otp]);
+
+      // Send OTP email
+      await sendOTPEmail(user.email, otp);
+
+      // Respond with a message indicating OTP has been sent
+      res.status(200).send({ message: "Login successful. Please check your email for the OTP." });
+    } catch (error) {
+      console.error("OTP generation error:", error);
+      res.status(500).send({ message: "Server error" });
+    }
+  })(req, res, next);
 });
 
-router.post('/verify-login-otp', async (req, res) => {
+// OTP verification route
+router.post('/verify-login-otp', async (req, res, next) => {
   const { email, otp } = req.body;
 
   if (!email || !otp) {
-      return res.status(400).send({ message: "Email and OTP are required" });
+    return res.status(400).send({ message: "Email and OTP are required" });
   }
 
   try {
-      const [verification] = await db.query("SELECT * FROM otp_verification WHERE email = ? AND otp = ?", [email, otp]);
+    const [verification] = await db.query("SELECT * FROM otp_verification WHERE email = ? AND otp = ?", [email, otp]);
 
-      if (verification.length === 0) {
-          return res.status(400).send({ message: "Invalid OTP" });
+    if (verification.length === 0) {
+      return res.status(400).send({ message: "Invalid OTP" });
+    }
+
+    // Retrieve the user from your database
+    const [userResult] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (userResult.length === 0) {
+      return res.status(400).send({ message: "User not found" });
+    }
+    const user = userResult[0];
+
+    req.login(user, async (err) => {
+      if (err) {
+        return next(err);
       }
+    
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        second_name: user.second_name,
+      };
+    
+      console.log("Session data after login:", req.session);
+    
+      try {
+        await new Promise((resolve, reject) => {
+          req.session.save((saveErr) => {
+            if (saveErr) return reject(saveErr);
+            resolve();
+          });
+        });
+    
+        await db.query("DELETE FROM otp_verification WHERE email = ?", [email]);
+    
+        res.status(200).send({
+          user: req.session.user, // Send user data in response
+          message: "OTP verified successfully. You are now logged in.",
+        });
+      } catch (error) {
+        console.error("Error during session save or OTP deletion:", error);
+        return next(error);
+      }
+    });
+    
 
-      // OTP verified successfully, proceed with further actions (like creating a session or JWT)
-      res.status(200).send({ message: "OTP verified successfully. You are now logged in." });
   } catch (error) {
-      console.error("OTP verification error:", error);
-      res.status(500).send({ message: "Server error" });
+    console.error("OTP verification error:", error);
+    res.status(500).send({ message: "Server error" });
   }
 });
 
+
+
   
-
-
-// Forgot Password route
 // Send OTP and store it in the otp_verification table
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -346,7 +404,7 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// Endpoint to verify OTP and reset password
+
 // Reset password after OTP verification
 router.post('/reset-password', async (req, res) => {
   const { email, otp, newPassword } = req.body;
@@ -388,6 +446,39 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+router.get("/check-session", (req, res) => {
+  console.log("Session contents:", req.session);
+  console.log("Passport session data:", req.session.passport);
+  console.log("Authenticated user:", req.user);
+  res.json({ user: req.isAuthenticated() ? req.user : null });
+});
 
+
+
+router.get("/test-session", (req, res) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("User in session:", req.user);  // Log the user object
+
+  if (req.user) {
+    return res.json({ user: req.user });
+  } else {
+    return res.status(401).json({ message: "No user in session" });
+  }
+});
+
+
+router.get('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).json({ message: "Logged out successfully" });
+    });
+  });
+});
 
 export default router;

@@ -9,9 +9,10 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  // Import necessary components
 import Nfr from "./components/User/Nfr.js"
 import ProductDetail from "./components/User/ProductDetail.js"
-import Header from "./components/User/Header"
+import Header from "./components/User/Header/Header"
 import Footer from "./components/User/Footer"
 import CategoryDetail from "./components/User/CategoryDetail.js"
+import { AuthProvider } from './components/User/AuthContext.js';
 function App() {
   const data = useApiData();  // Call the custom hook
   
@@ -25,7 +26,9 @@ function App() {
         {/* Product detail page with Header and Footer */}
         <Route path="/product/:id" element={
           <>
+           <AuthProvider>
             <Header />
+          </AuthProvider>
             <ProductDetail />
             <Footer />
           </>
@@ -33,7 +36,9 @@ function App() {
         
         <Route path="/category/:categoryName" element={
           <>
-            <Header />
+          <AuthProvider>
+             <Header />
+         </AuthProvider>
             <CategoryDetail />
             <Footer />
           </>

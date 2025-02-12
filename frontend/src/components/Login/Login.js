@@ -46,8 +46,9 @@ function Login() {
 
       if (response.status === 200) {
         toast.success("OTP verified successfully. You are now logged in.");
-        localStorage.setItem("user", JSON.stringify(response.data)); // Store user data
-        navigate("/dashboard"); // Redirect to dashboard after OTP verification
+        sessionStorage.setItem("user", JSON.stringify(response.data));
+
+        navigate("/"); // Redirect to dashboard after OTP verification
       }
     } catch (error) {
       if (error.response) {
@@ -64,69 +65,72 @@ function Login() {
         <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
         
         {isOtpSent ? (
-          // OTP Verification Form
-          <Formik
-            initialValues={{ otp: "" }}
-            onSubmit={handleOtpVerification}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-4">
-                <div>
-                  <Field
-                    type="text"
-                    name="otp"
-                    placeholder="Enter OTP"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isSubmitting}
-                >
-                  Verify OTP
-                </button>
-              </Form>
-            )}
-          </Formik>
-        ) : (
-          // Login Form
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            validationSchema={validationSchema}
-            onSubmit={handleLogin}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-4">
-                <div>
-                  <Field
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
-                </div>
-                <div>
-                  <Field
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isSubmitting}
-                >
-                  Login
-                </button>
-              </Form>
-            )}
-          </Formik>
-        )}
+  // OTP Verification Form
+  <Formik
+    key="otp-form" // unique key for OTP form
+    initialValues={{ otp: "" }}
+    onSubmit={handleOtpVerification}
+  >
+    {({ isSubmitting }) => (
+      <Form className="space-y-4">
+        <div>
+          <Field
+            type="text"
+            name="otp"
+            placeholder="Enter OTP"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={isSubmitting}
+        >
+          Verify OTP
+        </button>
+      </Form>
+    )}
+  </Formik>
+) : (
+  // Login Form
+  <Formik
+    key="login-form" // unique key for Login form
+    initialValues={{ email: "", password: "" }}
+    validationSchema={validationSchema}
+    onSubmit={handleLogin}
+  >
+    {({ isSubmitting }) => (
+      <Form className="space-y-4">
+        <div>
+          <Field
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+        </div>
+        <div>
+          <Field
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={isSubmitting}
+        >
+          Login
+        </button>
+      </Form>
+    )}
+  </Formik>
+)}
+
 
              <p className="text-center mt-4">
         Don't have an account? <a href="/register" className="text-blue-500 hover:text-blue-700">Register</a>
