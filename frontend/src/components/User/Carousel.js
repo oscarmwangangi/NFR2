@@ -42,7 +42,7 @@ function Carousel() {
   <div className="flex flex-col md:flex-row mt-4">
     {/* Categories Panel */}
     <div
-      className={`md:static bg-gray-100 shadow-md rounded-lg p-4 w-full md:w-1/5 transition-transform duration-300 ease-in-out ${
+      className={`md:static bg-black text-white bg-opacity-70 shadow-md rounded-lg p-4 w-full md:w-1/5 transition-transform duration-300 ease-in-out ${
         menuOpen ? "block" : "hidden md:block"
       }`}
     >

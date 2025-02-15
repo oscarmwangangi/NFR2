@@ -26,8 +26,8 @@ function AccountDropdown({
         >
          <AccountCircleIcon />
          <span className="hover:underline">
-  {user ? `${user.first_name} ${user.second_name}` : "Account"}
-</span>
+          {user ? `${user.first_name} ${user.second_name}` : "Account"}
+        </span>
 
 
 

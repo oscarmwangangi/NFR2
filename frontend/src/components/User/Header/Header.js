@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DesktopHeader from "./DesktopHeader";
 import MobileHeader from "./MobileHeader";
+import BreadcrumbTrail from "../BreadcrumbTrail";
 
 function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -17,23 +18,20 @@ function Header() {
     };
 
     window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Fetch user session data
+  // Fetch user session data and handle dropdowns
   useEffect(() => {
     const storedData = sessionStorage.getItem("user");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       console.log("Retrieved user data from session:", parsedData);
       setUser(parsedData.user);
-    }else {
+    } else {
       checkSession();
     }
 
-    // Close dropdowns when clicking outside
     const handleClickOutside = (event) => {
       if (showAccountDropdown && !event.target.closest(".account-dropdown")) {
         setShowAccountDropdown(false);
@@ -44,12 +42,9 @@ function Header() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showAccountDropdown, showHelpDropdown]);
 
-  // Check session from backend
   const checkSession = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/check-session", {
@@ -62,10 +57,8 @@ function Header() {
     } catch (error) {
       console.error(error);
     }
-    
   };
 
-  // Logout function
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -87,7 +80,6 @@ function Header() {
     }
   };
 
-  // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -96,39 +88,49 @@ function Header() {
   };
 
   return (
-    <header className="bg-white shadow-md">
-      {isMobile ? (
-        //  <div className="hidden md:block">
-        <MobileHeader
-          user={user}
-          showAccountDropdown={showAccountDropdown}
-          showHelpDropdown={showHelpDropdown}
-          toggleAccountDropdown={() => setShowAccountDropdown((prev) => !prev)}
-          toggleHelpDropdown={() => setShowHelpDropdown((prev) => !prev)}
-          handleLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-        />
-        // </div>
-      ) : (
-        // <div className="hidden md:block">
-        <DesktopHeader
-          user={user}
-          showAccountDropdown={showAccountDropdown}
-          showHelpDropdown={showHelpDropdown}
-          toggleAccountDropdown={() => setShowAccountDropdown((prev) => !prev)}
-          toggleHelpDropdown={() => setShowHelpDropdown((prev) => !prev)}
-          handleLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-        />
-        // </div>
-      )}
-    </header>
+    <>
+      {/* Red Bar (Not Sticky) */}
+      <div className="bg-red-500 p-3 text-white flex justify-between">
+        <h1>Thank you for choosing us</h1>
+        <h1>+25417544384</h1>
+      </div>
+
+      {/* Sticky Header */}
+      <header className="bg-white shadow-md sticky top-0 z-20">
+        {isMobile ? (
+          <MobileHeader
+            user={user}
+            showAccountDropdown={showAccountDropdown}
+            showHelpDropdown={showHelpDropdown}
+            toggleAccountDropdown={() => setShowAccountDropdown((prev) => !prev)}
+            toggleHelpDropdown={() => setShowHelpDropdown((prev) => !prev)}
+            handleLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+          />
+        ) : (
+          <DesktopHeader
+            user={user}
+            showAccountDropdown={showAccountDropdown}
+            showHelpDropdown={showHelpDropdown}
+            toggleAccountDropdown={() => setShowAccountDropdown((prev) => !prev)}
+            toggleHelpDropdown={() => setShowHelpDropdown((prev) => !prev)}
+            handleLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+          />
+        )}
+      </header>
+
+      {/* Rest of the page */}
+      <div className="text-white">
+        <BreadcrumbTrail />
+      </div>
+    </>
   );
 }
 

@@ -1,109 +1,174 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+// ProductDetail.js
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import 'font-awesome/css/font-awesome.min.css';
+import { useCart } from "./Cart/CartContext";
+import RecentViewed from "./RecentViewed";
+import { useBreadcrumb } from './BreadcrumbContext';
+
+// Component to display the product image.
+const ProductImage = ({ imagePath, name }) => (
+  <div className="w-full lg:w-1/2">
+    <img
+      src={`${process.env.REACT_APP_BACKEND_URL}/${imagePath}`}
+      alt={name}
+      className="w-full h-96 object-cover rounded-lg"
+    />
+  </div>
+);
+
+// Component to display product information, quantity selector, and add-to-cart button.
+const ProductInfo = ({ product, quantity, changeQuantity, addToCart }) => (
+  <div className="w-full lg:w-1/2 lg:ml-8 mt-4 lg:mt-0">
+    <h2 className="text-3xl font-semibold text-gray-800">{product.name}</h2>
+    <div className="mt-6">
+      <span className="text-xl font-bold text-[#313133]">Ksh {product.price}</span>
+      {product.discount_price && (
+        <span className="text-sm text-gray-500 line-through ml-2">
+          Ksh {product.discount_price}
+        </span>
+      )}
+    </div>
+    <div className="mt-6 flex items-center">
+      <button
+        onClick={() => changeQuantity(-1)}
+        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300 transition duration-300"
+      >
+        -
+      </button>
+      <span className="px-4 py-2 bg-gray-100 text-gray-700">{quantity}</span>
+      <button
+        onClick={() => changeQuantity(1)}
+        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-r hover:bg-gray-300 transition duration-300"
+      >
+        +
+      </button>
+    </div>
+    <button
+      onClick={() => addToCart(product, quantity)}
+      className="w-full mt-6 p-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+    >
+      Add to Cart
+    </button>
+  </div>
+);
+
+// Component for the share section.
+const ProductShare = () => (
+  <div className="container bg-white mx-auto py-8 p-4">
+    <p className="font-medium text-gray-700">Share this product:</p>
+    <div className="flex space-x-4 mt-2">
+      <a href="#" className="text-blue-500 hover:text-blue-700">
+        <i className="fa fa-facebook-f"></i>
+      </a>
+      <a href="#" className="text-gray-700 hover:text-gray-900">
+        <i className="fa fa-twitter"></i>
+      </a>
+      <a href="#" className="text-pink-500 hover:text-pink-700">
+        <i className="fa fa-instagram"></i>
+      </a>
+      <a href="#" className="text-blue-600 hover:text-blue-800">
+        <i className="fa fa-linkedin-in"></i>
+      </a>
+    </div>
+  </div>
+);
+
+// Component for the product description.
+const ProductDescription = ({ description }) => (
+  <div className="container bg-white mx-auto py-8 p-4">
+    <h1 className="text-2xl font-semibold text-gray-800">Product Description</h1>
+    <p className="mt-3 text-lg text-gray-600">{description}</p>
+  </div>
+);
 
 function ProductDetail() {
-  const { id } = useParams(); // Get the product id from the URL
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1); // State for quantity
+  const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
+  const { addToTrail } = useBreadcrumb();
 
+  // Fetch product details based on the URL parameter.
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products/${id}`) // Fetch product details using the id
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products/${id}`)
       .then((res) => {
-        setProduct(res.data); // Store the product data
+        setProduct(res.data);
       })
       .catch((err) => {
-        console.error('Error fetching product details:', err);
+        console.error("Error fetching product details:", err);
       });
   }, [id]);
+useEffect(() => {
+    if (product) {
+      addToTrail(product);
+    }
+  }, [product, addToTrail]);
+  // Scroll to the top whenever the product ID changes.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
 
-  // Function to handle quantity change
+  // Once the product is loaded, add it to the recently viewed list.
+  useEffect(() => {
+    if (!product) return;
+
+    const user = sessionStorage.getItem("user");
+    let recentProducts = [];
+
+    if (user) {
+      const stored = sessionStorage.getItem("recentViewed");
+      if (stored) recentProducts = JSON.parse(stored);
+    } else {
+      const stored = localStorage.getItem("recentViewed");
+      if (stored) recentProducts = JSON.parse(stored);
+    }
+
+    // Remove duplicates and add the new product at the beginning.
+    recentProducts = recentProducts.filter((item) => item.id !== product.id);
+    recentProducts.unshift(product);
+    // Limit the list to the 10 most recent items.
+    recentProducts = recentProducts.slice(0, 10);
+
+    if (user) {
+      sessionStorage.setItem("recentViewed", JSON.stringify(recentProducts));
+    } else {
+      localStorage.setItem("recentViewed", JSON.stringify(recentProducts));
+    }
+  }, [product]);
+
   const changeQuantity = (amount) => {
-    setQuantity((prevQuantity) => {
-      const newQuantity = prevQuantity + amount;
-      return newQuantity < 1 ? 1 : newQuantity; // Ensure quantity doesn't go below 1
-    });
+    setQuantity((prev) => Math.max(1, prev + amount));
   };
 
   if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="py-8 bg-slate-200">
+    <div className="pb-8 pt-4 -mt-3  bg-slate-200">
+       {/* <Breadcrumb lastCrumb={product.name} linkLast={true} /> */}
+
+      {/* Main product display */}
       <div className="container bg-white mx-auto mt-4 p-4 flex flex-col lg:flex-row items-start">
-        {/* Image Section */}
-        <div className="w-full lg:w-1/2">
-          <img
-            src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
-            alt={product.name}
-            className="w-full h-96 object-cover rounded-lg"
-          />
-        </div>
-
-        {/* Text and Button Section */}
-        <div className="w-full lg:w-1/2 lg:ml-8 mt-4 lg:mt-0">
-          <h2 className="text-3xl font-semibold text-gray-800">{product.name}</h2>
-
-          {/* Price and Discount */}
-          <div className="mt-6">
-            <span className="text-xl font-bold text-[#313133]">Ksh {product.price}</span>
-            {product.discount_price && (
-              <span className="text-sm text-gray-500 line-through ml-2">
-                Ksh {product.discount_price}
-              </span>
-            )}
-            <p className='p-3'>{product.in_stock}</p>
-          </div>
-
-          {/* Quantity Selector */}
-          <div className="mt-6 flex items-center">
-            <button
-              onClick={() => changeQuantity(-1)} // Decrease quantity
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300 transition duration-300"
-            >
-              -
-            </button>
-            <span className="px-4 py-2 bg-gray-100 text-gray-700">{quantity}</span>
-            <button
-              onClick={() => changeQuantity(1)} // Increase quantity
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-r hover:bg-gray-300 transition duration-300"
-            >
-              +
-            </button>
-          </div>
-
-          {/* Add to Cart Button */}
-          <button className="w-full mt-6 p-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300">
-            Add to Cart
-          </button>
-        </div>
+        <ProductImage imagePath={product.image_path} name={product.name} />
+        <ProductInfo
+          product={product}
+          quantity={quantity}
+          changeQuantity={changeQuantity}
+          addToCart={addToCart}
+        />
       </div>
 
-      
+      {/* Share section */}
+      <ProductShare />
 
-      {/* Share Section */}
+      {/* Product description */}
+      <ProductDescription description={product.description} />
+
+      {/* Recently viewed products */}
       <div className="container bg-white mx-auto py-8 p-4">
-        <p className="font-medium text-gray-700">Share this product:</p>
-        <div className="flex space-x-4 mt-2">
-          <a href="#" className="text-blue-500 hover:text-blue-700">
-            <i className="fa fa-facebook-f"></i>
-          </a>
-          <a href="#" className="text-gray-700 hover:text-gray-900">
-            <i className="fa fa-twitter"></i>
-          </a>
-          <a href="#" className="text-pink-500 hover:text-pink-700">
-            <i className="fa fa-instagram"></i>
-          </a>
-          <a href="#" className="text-blue-600 hover:text-blue-800">
-            <i className="fa fa-linkedin-in"></i>
-          </a>
-        </div>
-      </div>
-      {/* Product Description Section */}
-      <div className="container bg-white mx-auto py-8 p-4">
-        <h1 className="text-2xl font-semibold text-gray-800">Product Description</h1>
-        <p className="mt-3 text-lg text-gray-600">{product.description}</p>
+        <RecentViewed />
       </div>
     </div>
   );

@@ -17,7 +17,9 @@ function Products() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="bg-white">
+
+    <div className="container mx-auto p-4 bg-white">
       <h2 className="text-2xl font-bold">Products</h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {products.length > 0 ? (
@@ -47,6 +49,7 @@ function Products() {
           <p>No products available in this category.</p>
         )}
       </div>
+    </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import session from 'express-session';
 import passport from 'passport';
 import productController from './backend/controllers/productController.js';
 
+
 import multer from 'multer';
 import {upload} from './backend/multer.js'
 const app = express();
@@ -37,7 +38,7 @@ app.use(session({
   saveUninitialized: true,  
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Use only over HTTPS in production
+    // secure: process.env.NODE_ENV === 'production', // Use only over HTTPS in production
     sameSite: 'lax', // Helps with CSRF protection
     maxAge: 1000 * 60 * 60 * 24, // 1 day
   }
@@ -48,10 +49,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 import LoginRoutes from './backend/LoginRoutes/LoginRoutes.js';
+import cartController from './backend/controllers/cartController.js';
+import recentViewedController from './backend/controllers/recentViewedController.js';
 // import LoginRoutes2 from './backend/LoginRoutes/LoginRoutes2.js';
 // Sample API endpoint
+// Place this middleware after your session middleware and before your routes
+app.use((req, res, next) => {
+  if (!req.user && req.session.user) {
+    req.user = req.session.user;
+  }
+  next();
+});
+app.get("/check-session", (req, res) => {
+  console.log("Session contents:", req.session);
+  console.log("Passport session data:", req.session.passport);
+  console.log("Authenticated user:", req.user);
+  res.json({ user: req.isAuthenticated() ? req.user : null });
+});
+
 
 app.use('/api', LoginRoutes);
+app.use('/api', cartController);
+app.use('/api', recentViewedController);
 // app.use('/api', LoginRoutes2);
 app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 

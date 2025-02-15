@@ -16,8 +16,9 @@ function Black_Friday() {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-gray-100 px-20 mx-auto py-12">
-    <div className="container mx-auto p-4">
+    <div>
+    <div className="bg-gray-900">
+    <div className="container bg-gray-900 p-4  text-gray-100 px-20 mx-auto py-12">
       <h2 className="text-4xl font-extrabold text-left mb-8 text-red-500 animate-inch-worm">Black Friday Deal</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         {products.length > 0 ? (
@@ -53,6 +54,7 @@ function Black_Friday() {
           <p>No products available in this category.</p>
         )}
       </div>
+    </div>
     </div>
     </div>
   );

@@ -16,8 +16,8 @@ function Top_Selling() {
   }, []);
 
   return (
-    <div className="bg-gray-50">
-    <div className="container mx-auto p-4 ">
+    <div className="bg-white">
+    <div className="container bg-white mx-auto p-4 ">
       <h2 className="text-3xl font-bold text-left mb-8 text-gray-800">Top Selling</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         {products.length > 0 ? (

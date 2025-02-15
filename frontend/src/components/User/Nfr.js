@@ -7,11 +7,14 @@ import Top_Selling from "./Top_Selling"
 import Black_Friday from "./Black_Friday"
 import New_Arrival from "./New_Arrival"
 import Footer from "./Footer"
+import ProductBreadcrumb from "./ProductBreadcrumb"
+import BreadcrumbTrail from './BreadcrumbTrail';
 function Nfr(){
     return(
         <>
         {/* <h1>hi</h1> */}
         {/* <Header /> */}
+      
         <Carousel />
         <Products />
         <Category />

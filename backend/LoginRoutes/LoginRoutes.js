@@ -267,10 +267,6 @@ passport.use(
     }
   )
 );
-// Passport session setup.
-// Serialize the user instance to the session by user id.
-
-
 
 // POST route to handle login
 router.post('/login', (req, res, next) => {
@@ -454,17 +450,25 @@ router.get("/check-session", (req, res) => {
 });
 
 
-
-router.get("/test-session", (req, res) => {
-  console.log("Session ID:", req.sessionID);
-  console.log("User in session:", req.user);  // Log the user object
-
-  if (req.user) {
-    return res.json({ user: req.user });
+// This endpoint is for manual login session checks
+router.get('/check-session-manual', (req, res) => {
+  if (req.session && req.session.user) {
+    return res.status(200).json({ user: req.session.user });
   } else {
-    return res.status(401).json({ message: "No user in session" });
+    return res.status(401).json({ message: 'User not logged in manually' });
   }
 });
+
+// router.get("/test-session", (req, res) => {
+//   console.log("Session ID:", req.sessionID);
+//   console.log("User in session:", req.user);  // Log the user object
+
+//   if (req.user) {
+//     return res.json({ user: req.user });
+//   } else {
+//     return res.status(401).json({ message: "No user in session" });
+//   }
+// });
 
 
 router.get('/logout', (req, res, next) => {

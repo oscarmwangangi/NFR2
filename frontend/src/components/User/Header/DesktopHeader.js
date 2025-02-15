@@ -9,6 +9,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MobileHeader from "./MobileHeader";
 import HelpDropdown from "./HelpDropdown";
 import AccountDropdown from "./AccountDropdown";
+import { useCart } from "../Cart/CartContext"; // Import useCart
 
 
 function DesktopHeader({
@@ -22,7 +23,9 @@ function DesktopHeader({
     searchQuery,
     setSearchQuery,
     handleSearch,
+   
   }) {
+    const { cartCount } = useCart(); // Get cart count
     return (
       <div className="hidden md:flex justify-between items-center px-16">
         <div className="flex items-center ml-5 space-x-2">
@@ -54,10 +57,20 @@ function DesktopHeader({
             showHelpDropdown={showHelpDropdown}
             toggleHelpDropdown={toggleHelpDropdown}
           />
-          <button className="flex items-center space-x-1 focus:outline-none">
-            <ShoppingCartIcon />
-            <span className="hover:underline">Cart</span>
-          </button>
+          <div className="flex items-center space-x-8">
+        <Link to="/cart" className="relative flex items-center space-x-1">
+          <ShoppingCartIcon />
+          {cartCount > 0 && (
+            <div>
+          <span className="hover:underline">Cart </span>
+          <span className="absolute bg-red-500 text-white text-xs rounded-full px-2">
+              {cartCount}
+            </span>
+         
+          </div>
+        )}
+        </Link>
+      </div>
         </div>
       </div>
     );
