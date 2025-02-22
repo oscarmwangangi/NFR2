@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
 import productController from './backend/controllers/productController.js';
-
+import deliveryRoutes from './backend/controllers/deliveryRoutes.js';
+import orderController from './backend/controllers/orderController.js';
+import mpesaController from './backend/controllers/mpesaController.js';
 
 import multer from 'multer';
 import {upload} from './backend/multer.js'
@@ -69,8 +71,11 @@ app.get("/check-session", (req, res) => {
 
 
 app.use('/api', LoginRoutes);
+app.use('/api', deliveryRoutes);
 app.use('/api', cartController);
+app.use('/api', orderController);
 app.use('/api', recentViewedController);
+app.use('/api', mpesaController);
 // app.use('/api', LoginRoutes2);
 app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 

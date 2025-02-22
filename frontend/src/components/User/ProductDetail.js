@@ -146,7 +146,7 @@ useEffect(() => {
   if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="pb-8 pt-4 -mt-3  bg-slate-200">
+    <div className="pb-8 pt-4 -mt-3  bg-[#f5f5f5]">
        {/* <Breadcrumb lastCrumb={product.name} linkLast={true} /> */}
 
       {/* Main product display */}

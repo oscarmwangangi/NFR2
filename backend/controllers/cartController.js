@@ -13,6 +13,14 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // routes/cart.js or similar
 // routes/cart.js
+
+export const ensureAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next(); // User is authenticated, proceed to the next middleware/route handler
+  }
+  res.status(401).json({ message: "Unauthorized" }); // User is not authenticated
+};
+
 router.post('/cart/sync', async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -87,7 +95,33 @@ router.post('/cart/sync', async (req, res) => {
   });
   
   
-
+  router.delete("/cart/:itemId", async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    // Use req.user.id instead of req.session.userId
+    const userId = req.user.id;
+    const { itemId } = req.params;
+  
+    console.log("Deleting item with ID:", itemId, "for user:", userId); // Debug log
+  
+    try {
+      const [result] = await db.query(
+        "DELETE FROM cart_items WHERE id = ? AND user_id = ?",
+        [itemId, userId]
+      );
+      console.log("Affected rows:", result.affectedRows); // Debug log
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Item not found or not authorized" });
+      }
+      res.json({ message: "Item deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      res.status(500).json({ error: "Failed to delete item" });
+    }
+  });
+  
 
 
 

@@ -48,10 +48,10 @@ function Carousel() {
     >
       <h2 className="text-xl font-bold mb-2">Categories</h2>
       <ul>
-        <li className="mb-1 cursor-pointer hover:text-blue-600">Category 1</li>
-        <li className="mb-1 cursor-pointer hover:text-blue-600">Category 2</li>
-        <li className="mb-1 cursor-pointer hover:text-blue-600">Category 3</li>
-        <li className="mb-1 cursor-pointer hover:text-blue-600">Category 4</li>
+        <li className="mb-1 cursor-pointer hover:text-blue-600 p-2">Bags</li>
+        <li className="mb-1 cursor-pointer hover:text-blue-600 p-2">Clothing</li>
+        <li className="mb-1 cursor-pointer hover:text-blue-600 p-2">Bracelets</li>
+        <li className="mb-1 cursor-pointer hover:text-blue-600 p-2">Jewelery</li>
       </ul>
     </div>
 

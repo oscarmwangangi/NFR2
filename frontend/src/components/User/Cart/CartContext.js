@@ -1,12 +1,14 @@
 // CartContext.js
 import { createContext, useContext, useState, useEffect } from "react";
-
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
-
+  const [itemToRemove, setItemToRemove] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
   // --- Existing session-checking and cart-loading logic ---
 
   const checkSession = async () => {
@@ -169,11 +171,53 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const confirmRemoveItem = async (itemId) => {
+    // Dismiss any existing toasts before showing a new one
+    toast.dismiss();
+  
+    // Remove the item from local storage and update the state
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.id !== itemId);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  
+    if (user) {
+      try {
+        const res = await fetch(`http://localhost:5000/api/cart/${itemId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+    
+        if (res.ok) {
+          // Optionally refresh the cart state from the DB if needed
+          fetchCart();
+          toast.success("Item removed successfully!");
+        } else {
+          // If the DB deletion fails, log the error but local storage is already updated
+          console.error("Failed to delete item from the database");
+          toast.error("Failed to remove item from the database.");
+        }
+      } catch (error) {
+        console.error("Error deleting item from the database:", error);
+        toast.error("An error occurred while removing the item.");
+      }
+    } else {
+      // If not logged in, we're done since we already updated local storage
+      toast.success("Item removed successfully!");
+    }
+  
+    setShowConfirm(false); // Close the confirmation modal
+  };
+  const clearCart = () => {
+    setCart([]);
+  };
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, updateCartItemQuantity, cartCount }}
+      value={{ cart, addToCart, updateCartItemQuantity, cartCount,confirmRemoveItem,clearCart }}
     >
       {children}
     </CartContext.Provider>
@@ -181,4 +225,5 @@ export const CartProvider = ({ children }) => {
 };
 
 export const useCart = () => useContext(CartContext);
-export default CartContext;
+export default {CartContext }
+
