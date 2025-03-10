@@ -28,6 +28,12 @@ function Sidebar({ isOpen, onItemClick }) {
         </li>
         <li
           className="my-4 cursor-pointer"
+          onClick={() => onItemClick('Manage Categories')}
+        >
+         Manage Categories
+        </li>
+        <li
+          className="my-4 cursor-pointer"
           onClick={() => onItemClick('Orders')}
         >
           Orders

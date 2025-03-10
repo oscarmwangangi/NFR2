@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import * as THREE from "three";
+import { calculateDiscountPercentage } from "./utils/DiscountUtlils.js"; // Import utility function
 
 function New_Arrival() {
   const [products, setProducts] = useState([]);
@@ -157,8 +158,16 @@ function New_Arrival() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {products.length > 0 ? (
           products.map((product) => (
-            <Link key={product.id} to={`/product/${product.id}`}>
-              <div className="product-item group cursor-pointer p-4 rounded-lg hover:shadow-lg transition-all">
+            <Link key={product.id} 
+            to={`/product/${product.id}`}
+            className="product-item group cursor-pointer p-4 rounded-lg hover:shadow-lg transition-all relative"
+            >
+
+              {product.discount_price && (
+                          <div className="absolute top-2 right-2 bg-red-500 bg-opacity-10 text-[#f5594b] text-sm font-semibold  px-2 py-1 rounded">
+                                  -{calculateDiscountPercentage(product.price, product.discount_price)}%
+                                </div>
+                              )}
                 <img
                   src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
                   alt={product.name}
@@ -168,16 +177,17 @@ function New_Arrival() {
                   {product.name}
                 </h3>
                 <div className="mt-2 flex flex-col">
-                  <span className="text-xl font-bold text-white">
-                    Ksh {product.price}
-                  </span>
-                  {product.discount_price && (
-                    <span className="text-sm text-whites line-through">
+                {product.discount_price && (
+                    <span className="text-xl font-bold text-white">
                       {product.discount_price}
                     </span>
                   )}
+                  <span className="text-sm text-white line-through">
+                    Ksh {product.price}
+                  </span>
+                 
                 </div>
-              </div>
+     
             </Link>
           ))
         ) : (

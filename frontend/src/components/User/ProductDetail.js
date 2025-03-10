@@ -6,7 +6,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import { useCart } from "./Cart/CartContext";
 import RecentViewed from "./RecentViewed";
 import { useBreadcrumb } from './BreadcrumbContext';
-
+import { calculateDiscountPercentage } from "./utils/DiscountUtlils.js"; // Import utility function
 // Component to display the product image.
 const ProductImage = ({ imagePath, name }) => (
   <div className="w-full lg:w-1/2">
@@ -22,13 +22,21 @@ const ProductImage = ({ imagePath, name }) => (
 const ProductInfo = ({ product, quantity, changeQuantity, addToCart }) => (
   <div className="w-full lg:w-1/2 lg:ml-8 mt-4 lg:mt-0">
     <h2 className="text-3xl font-semibold text-gray-800">{product.name}</h2>
-    <div className="mt-6">
-      <span className="text-xl font-bold text-[#313133]">Ksh {product.price}</span>
-      {product.discount_price && (
-        <span className="text-sm text-gray-500 line-through ml-2">
+    <div className="mt-6 relative">
+    {product.discount_price && (
+        <span className="text-xl font-bold text-[#313133]">
           Ksh {product.discount_price}
         </span>
       )}
+      <span className="text-sm text-gray-500 line-through ml-2">Ksh {product.price}</span>
+      <span>
+          {/* Discount Percentage Badge */}
+                        {product.discount_price && (
+                          <div className="absolute top-2 right-2 bg-red-500 bg-opacity-10 text-[#f5594b] text-sm font-semibold  px-2 py-1 rounded">
+                            -{calculateDiscountPercentage(product.price, product.discount_price)}%
+                          </div>
+                        )}
+      </span>
     </div>
     <div className="mt-6 flex items-center">
       <button

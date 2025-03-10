@@ -8,6 +8,8 @@ import Register from './components/Login/Register.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  
 import Nfr from "./components/User/Nfr.js";
 import ProductDetail from "./components/User/ProductDetail.js";
+import AllProductsPage from "./components/User/AllProductsPage"
+import CategoryPage from "./components/User/CategoryPage"
 import Header from "./components/User/Header/Header";
 import Footer from "./components/User/Footer";
 import CategoryDetail from "./components/User/CategoryDetail.js";
@@ -30,6 +32,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/checkout" element={<Checkout />} />
+            
             {/* Product detail page with Header, ProductDetail, Cart, and Footer */}
             <Route
               path="/product/:id"
@@ -81,15 +84,34 @@ function App() {
                 </>
               }
             />
-            
+            <Route
+              path="/products" 
+              element={
+                <>
+                  <Header />
+                  <AllProductsPage />
+                  <Footer />
+                </>
+              }
+            />
+             <Route
+              path="/categories/:categoryName"
+              element={
+                <>
+                  <Header />
+                  <CategoryPage />
+                  <Footer />
+                </>
+              }
+            />
             {/* Admin page with Header, AdminPage, and Footer */}
             <Route
               path="/admin"
               element={
                 <>
-                  <Header />
+                  {/* <Header /> */}
                   <AdminPage />
-                  <Footer />
+                  {/* <Footer /> */}
                 </>
               }
             />

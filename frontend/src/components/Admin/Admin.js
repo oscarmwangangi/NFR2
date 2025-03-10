@@ -5,6 +5,7 @@ import HamburgerButton from './HamburgerButton';
 import Dashboard from './Partials/Dashboard';
 import AddProduct from './Partials/AddProduct';
 import ManageProduct from './Partials/ManageProduct';
+import ManageCategories from './Partials/ManageCategories';
 import Orders from './Partials/Orders';
 import Profile from './Partials/Profile';
 
@@ -33,6 +34,7 @@ function Admin() {
         {activeItem === 'Dashboard' && <Dashboard />}
         {activeItem === 'Add Product' && <AddProduct />}
         {activeItem === 'Manage Product' && <ManageProduct />}
+        {activeItem === 'Manage Categories' && <ManageCategories />}
         {activeItem === 'Orders' && <Orders />}
         {activeItem === 'Profile' && <Profile />}
       </div>

@@ -17,6 +17,7 @@ function Nfr(){
       
         <Carousel />
         <Products />
+        
         <Category />
         <Top_Selling />
         <Black_Friday />

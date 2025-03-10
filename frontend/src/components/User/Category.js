@@ -37,7 +37,7 @@ function Category() {
           distinctCategories.map((product) => (
             <Link
               key={product.id}
-              to={`/category/${encodeURIComponent(product.category)}`}
+              to={`/categories/${product.category}`} // Use dynamic URL with category
               className="block relative overflow-hidden rounded-lg bg-[#f4f4f4] shadow-lg transition-transform duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl"
             >
               <img

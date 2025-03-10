@@ -88,17 +88,19 @@ app.post('/api/products', upload.single('image'), productController.addProduct);
 app.get('/api/products', productController.getAllProducts); // Get all products
 app.get("/api/user/products/:id", productController.getProductById);
 app.get("/api/user/products", productController.getUserProducts); // Correct route
-
+app.delete('/api/products/:id', productController.deleteProduct); // Delete product
 app.put('/api/products/:id',upload.single('image'), productController.updateProduct);
  // Update product
 
 app.get('/api/categories', productController.getAllCategories);
 app.post('/api/categories', productController.addCategory);
- 
-app.delete('/api/products/:id', productController.deleteProduct); // Delete product
-
 app.put("/api/categories/:id",  productController.updateCategory);
 app.delete("/api/categories/:id",  productController.deleteCategory);
+
+app.get('/api/brands', productController.getBrands);
+app.post('/api/brands', productController.addBrand);
+app.put("/api/brands/:id",  productController.updateBrand);
+app.delete("/api/brands/:id",  productController.deleteBrand);
 
 
 // Express serves the frontend React app in production (explained below)

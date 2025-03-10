@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { calculateDiscountPercentage } from "./utils/DiscountUtlils.js"; // Import utility function
 function Top_Selling() {
   const [products, setProducts] = useState([]);
 
@@ -26,7 +27,13 @@ function Top_Selling() {
             key={product.id}
             to={`/product/${product.id}`}  // Navigate to product detail page
           >
-            <div key={product.id} className="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
+            <div key={product.id} className="block bg-white p-4 rounded-lg relative shadow-md hover:shadow-lg transition">
+           {/* Discount Percentage Badge */}
+           {product.discount_price && (
+                          <div className="absolute top-2 right-2 bg-red-500 bg-opacity-10 text-[#f5594b] text-sm font-semibold  px-2 py-1 rounded">
+                          -{calculateDiscountPercentage(product.price, product.discount_price)}%
+                        </div>
+                      )}
               <img
                 src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
                 alt={product.name}
@@ -35,12 +42,13 @@ function Top_Selling() {
               <h3 className="font-semibold text-sm text-[#313133] truncate">{product.name}</h3>
               {/* <p className="text-sm text-gray-500">{product.description}</p> */}
               <div className="mt-2 flex flex-col">
-                <span className="text-xl font-bold text-[#313133]">Ksh {product.price}</span>
-                {product.discount_price && (
-                  <span className="text-sm text-gray-500 line-through">
+              {product.discount_price && (
+                  <span className="text-xl font-bold text-[#313133]">
                     {product.discount_price}
                   </span>
                 )}
+                <span className="text-sm text-gray-500 line-through">Ksh {product.price}</span>
+               
               </div>
             </div>
             </Link>
