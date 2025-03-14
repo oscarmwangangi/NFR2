@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import {Link} from "react-router-dom";
 const Footer = () => {
   // State for back-to-top visibility
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -107,9 +107,10 @@ const Footer = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-red-400 text-sm">
+                  <Link 
+                  to="chat" className="hover:text-red-400 text-sm">
                     Live Chat
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a href="#" className="hover:text-red-400 text-sm">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 const CartSummary = ({
   subtotal,
   shippingCost,
@@ -15,6 +15,7 @@ const CartSummary = ({
   clearCart, // function passed from parent to clear cart state
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleOrder = async () => {
     if (isLoading) return;
@@ -82,6 +83,7 @@ const CartSummary = ({
         if (response.data.success) {
           toast.success("Order placed successfully!");
           clearCart();
+          navigate("/orders"); // Redirect to Orders page
         } else {
           toast.error("Order placement failed.");
         }

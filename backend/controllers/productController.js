@@ -8,56 +8,97 @@ dotenv.config();  // Load environment variables from .env file
 
 // Add a new product
 const addProduct = async (req, res) => {
-  console.log(req.body);  // Debug log
-  const { name, description, price, discount_price, in_stock, category, brand, size, gender, subcategory } = req.body;
+  console.log(req.body); // Debug log
+  const { name, description, price, discount_price, in_stock, category, brand, size, gender, subcategory, isTopLevelCategory } = req.body;
   const image_path = req.file ? `uploads/${path.basename(req.file.path)}` : null;
 
   try {
     // Ensure size is stored as JSON
-    let parsedSize = size; // Use let instead of const
+    let parsedSize = size;
     if (typeof size === "string") {
       parsedSize = JSON.parse(size); // Convert JSON string back to an array
     }
 
-    const result = await db.execute(
-      'INSERT INTO products (name, description, price, discount_price, in_stock, image_path, category, brand, size, gender, subcategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [name, description, price, discount_price, in_stock, image_path, category, brand, JSON.stringify(parsedSize), gender, subcategory]
-    );
-    res.status(201).json({ message: 'Product added successfully', productId: result[0].insertId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error adding product' });
-  }
-};
-const getUserProducts = async (req, res) => {
-  try {
-    const category = req.query.category;
-    let query = "SELECT * FROM products";
-    let queryParams = [];
+    // Determine the category ID based on whether it's a top-level category or subcategory
+    const categoryId = isTopLevelCategory ? category : subcategory;
 
-    if (category) {
-      query += " WHERE category = ?";
-      queryParams.push(category);
+    const result = await db.execute(
+      "INSERT INTO products (name, description, price, discount_price, in_stock, image_path, category, brand, size, gender, subcategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, description, price, discount_price, in_stock, image_path, categoryId, brand, JSON.stringify(parsedSize), gender, subcategory]
+    );
+
+    // If it's a top-level category, update the category's image_path
+    if (isTopLevelCategory && image_path) {
+      await db.execute(
+        "UPDATE categories SET image_path = ? WHERE id = ?",
+        [image_path, category]
+      );
     }
 
-    // Use async/await for executing queries
-    const [results] = await db.execute(query, queryParams);
+    res.status(201).json({ message: "Product added successfully", productId: result[0].insertId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error adding product" });
+  }
+};
 
+const getUserProducts = async (req, res) => {
+  try {
+    const { category, subcategory, brand, minPrice, maxPrice } = req.query;
+    let query = "SELECT * FROM products";
+    let queryParams = [];
+    let conditions = [];
+
+    if (category) {
+      conditions.push("category = ?");
+      queryParams.push(category);
+    }
+    if (subcategory) {
+      conditions.push("subcategory = ?");
+      queryParams.push(subcategory);
+    }
+    if (brand) {
+      const brandIds = brand.split(",");
+      conditions.push(`brand IN (${brandIds.map(() => '?').join(',')})`);
+      queryParams.push(...brandIds);
+    }
+    if (minPrice) {
+      conditions.push("price >= ?");
+      queryParams.push(minPrice);
+    }
+    if (maxPrice) {
+      conditions.push("price <= ?");
+      queryParams.push(maxPrice);
+    }
+
+    if (conditions.length > 0) {
+      query += " WHERE " + conditions.join(" AND ");
+    }
+
+    const [results] = await db.execute(query, queryParams);
     res.status(200).json(results);
   } catch (error) {
     console.error("Database query error:", error);
     res.status(500).json({ message: "Database error" });
   }
 };
+
 // Get all products
 const getAllProducts = async (req, res) => {
   try {
-    const [rows] = await db.execute('SELECT * FROM products');
+    const query = `
+      SELECT p.*, c.name AS category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category = c.id
+    `;
+    const [rows] = await db.execute(query);
+
     rows.forEach(product => {
       if (product.image_path) {
         product.image_path = `${process.env.BACKEND_URL}/${product.image_path}`;
       }
     });
+
     res.status(200).json(rows);
   } catch (error) {
     console.error(error);
@@ -159,6 +200,27 @@ const getAllCategories = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching categories' });
+  }
+};
+
+// In your categories controller
+const getCategoryById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await db.execute("SELECT * FROM categories WHERE id = ?", [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    const category = rows[0];
+
+    // Fetch subcategories for this category
+    const [subRows] = await db.execute("SELECT * FROM categories WHERE parent_id = ?", [id]);
+    category.subcategories = subRows;
+
+    res.status(200).json(category);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching category" });
   }
 };
 
@@ -298,5 +360,5 @@ const getProductById = async (req, res) => {
 // In your route
 
 
-export default { updateCategory, deleteCategory ,getAllCategories, addCategory,upload, addProduct, getAllProducts, updateProduct, deleteProduct,getUserProducts,getProductById,deleteBrand,updateBrand,addBrand,getBrands };  // Default export
+export default { updateCategory, deleteCategory ,getAllCategories, addCategory,upload, addProduct, getAllProducts, updateProduct, deleteProduct,getUserProducts,getProductById,deleteBrand,updateBrand,addBrand,getBrands,getCategoryById };  // Default export
 

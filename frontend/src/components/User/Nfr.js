@@ -6,7 +6,7 @@ import Category from "./Category"
 import Top_Selling from "./Top_Selling"
 import Black_Friday from "./Black_Friday"
 import New_Arrival from "./New_Arrival"
-import Footer from "./Footer"
+import Footer from "./Footer/Footer"
 import ProductBreadcrumb from "./ProductBreadcrumb"
 import BreadcrumbTrail from './BreadcrumbTrail';
 function Nfr(){

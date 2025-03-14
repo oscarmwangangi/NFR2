@@ -35,7 +35,8 @@ function AccountDropdown({
         {showAccountDropdown && (
           <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10 account-dropdown">
             <ul>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Orders</li>
+          
+              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer"><Link to="/orders">Orders</Link></li>
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Saved Items</li>
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Account</li>
               {user ? (

@@ -15,15 +15,19 @@ function CategoryPage() {
 
   // Fetch products and hierarchical categories
   useEffect(() => {
-    // Fetch all products
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products`)
-      .then(res => setAllProducts(res.data))
-      .catch(console.error);
+    const fetchData = async () => {
+      try {
+        const productsResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products`);
+        setAllProducts(productsResponse.data);
 
-    // Fetch hierarchical categories
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/categories`)
-      .then(res => setCategories(res.data))
-      .catch(console.error);
+        const categoriesResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/categories`);
+        setCategories(categoriesResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   // Apply filters whenever dependencies change
@@ -80,48 +84,75 @@ function CategoryPage() {
 
   // Recursive function to render categories with subcategories
   const renderCategories = (categories, level = 0) => {
-    return categories.map((category) => (
-      <li key={category.id} className="mb-1">
-        <div className="flex items-center justify-between hover:bg-gray-50 rounded">
-          {category.subcategories?.length > 0 ? (
-            <>
-              <button
-                onClick={() => toggleCategory(category.id)}
-                className={`flex-1 text-left px-3 py-2 rounded ${
-                  categoryName === category.name ? "bg-blue-100" : ""
-                }`}
-                style={{ paddingLeft: `${level * 20}px` }}
-              >
-                <span className="text-sm">{category.name}</span>
-              </button>
-              <button
-                onClick={() => toggleCategory(category.id)}
-                className="px-2 hover:bg-gray-200 rounded"
-              >
-                {expandedCategories[category.id] ? "−" : "+"}
-              </button>
-            </>
-          ) : (
-            <Link
-              to={`/products/${category.name}`}
-              className={`flex-1 text-left px-3 py-2 rounded ${
-                categoryName === category.name ? "bg-blue-100 text-blue-700" : ""
-              }`}
-              style={{ paddingLeft: `${level * 20}px` }}
-            >
-              <span className="text-sm">{category.name}</span>
-            </Link>
+    return categories.map((category) => {
+      const isTopLevel = level === 0;
+      return (
+        <li key={category.id} className="mb-1">
+          <div className="flex items-center justify-between hover:bg-gray-50 rounded">
+            {category.subcategories?.length > 0 ? (
+              <>
+                {isTopLevel ? (
+                  // Top-level category with subcategories: render as a clickable link
+                  <Link
+                    to={`/category/${category.id}`}
+                    className={`flex-1 text-left px-3 py-2 rounded ${
+                      categoryName === category.name ? "bg-blue-100" : ""
+                    }`}
+                    style={{ paddingLeft: `${level * 20}px` }}
+                  >
+                    <span className="text-sm">{category.name}</span>
+                  </Link>
+                ) : (
+                  // Subcategory with children: render as plain text (or button without navigation)
+                  <button
+                    className={`flex-1 text-left px-3 py-2 rounded ${
+                      categoryName === category.name ? "bg-blue-100" : ""
+                    }`}
+                    style={{ paddingLeft: `${level * 20}px` }}
+                  >
+                    <span className="text-sm">{category.name}</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => toggleCategory(category.id)}
+                  className="px-2 hover:bg-gray-200 rounded"
+                >
+                  {expandedCategories[category.id] ? "−" : "+"}
+                </button>
+              </>
+            ) : (
+              isTopLevel ? (
+                // Top-level leaf category: render as a clickable link
+                <Link
+                  to={`/category/${category.id}`}
+                  className={`flex-1 text-left px-3 py-2 rounded ${
+                    categoryName === category.name ? "bg-blue-100 text-blue-700" : ""
+                  }`}
+                  style={{ paddingLeft: `${level * 20}px` }}
+                >
+                  <span className="text-sm">{category.name}</span>
+                </Link>
+              ) : (
+                // Subcategory that is a leaf: render as plain text
+                <span
+                  className="flex-1 text-left px-3 py-2"
+                  style={{ paddingLeft: `${level * 20}px` }}
+                >
+                  {category.name}
+                </span>
+              )
+            )}
+          </div>
+          {expandedCategories[category.id] && category.subcategories && (
+            <ul className="ml-4">
+              {renderCategories(category.subcategories, level + 1)}
+            </ul>
           )}
-        </div>
-        
-        {expandedCategories[category.id] && category.subcategories && (
-          <ul className="ml-4">
-            {renderCategories(category.subcategories, level + 1)}
-          </ul>
-        )}
-      </li>
-    ));
+        </li>
+      );
+    });
   };
+  
 
   // Price range handlers
   const handlePriceChange = (type, value) => {
@@ -141,13 +172,11 @@ function CategoryPage() {
     <div className="bg-[#f5f5f5]">
       <div className="container mx-auto p-4 flex gap-8">
         {/* Sidebar */}
-        <div className="w-1/4 h-fit p-3 bg-white rounded-lg shadow-md">
-          <div>
-            <h3 className="text-lg font-bold mb-3">Categories</h3>
-            <ul className="space-y-1">
-              {renderCategories(categories)}
-            </ul>
-          </div>
+        <div className="w-1/4 h-fit bg-white p-4 rounded-lg shadow">
+          <h3 className="text-lg font-bold mb-3">Categories</h3>
+          <ul>
+            {renderCategories(categories)}
+          </ul>
 
           <div className="border-t pt-4">
             <h3 className="text-lg font-bold mb-3">Search</h3>
@@ -221,7 +250,7 @@ function CategoryPage() {
         </div>
 
         {/* Products Grid */}
-        <div className="w-3/4 bg-white p-4">
+        <div className="w-3/4 bg-white p-4 rounded-lg shadow">
           <h2 className="text-2xl font-bold mb-4 text-[#313133]">
             {categoryName || "All Products"}
           </h2>

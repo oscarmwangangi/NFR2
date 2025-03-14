@@ -138,4 +138,28 @@ NFR
   }
 });
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    next();
+  } else {
+    res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+}
+router.get("/check-session", (req, res) => {
+  console.log("Session contents:", req.session);
+  console.log("Passport session data:", req.session.passport);
+  console.log("Authenticated user:", req.user);
+  res.json({ user: req.isAuthenticated() ? req.user : null });
+});
+
+router.get("/orders", isAuthenticated, async (req, res) => {
+  const userEmail = req.user.email;
+  try {
+    const [orders] = await db.query("SELECT * FROM orders WHERE email = ?", [userEmail]);
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ success: false, message: "Error fetching orders" });
+  }
+});
 export default router;
