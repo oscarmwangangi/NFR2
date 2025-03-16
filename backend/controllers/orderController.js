@@ -108,7 +108,7 @@ NFR
       attachments: [
         {
           // filename: 'weblogo.png',
-          path: 'http://localhost:3000/weblogo.png', // or a URL if supported
+          path: `${process.env.FRONTEND_URL}/weblogo.png`, // or a URL if supported
           cid: 'logo@NFR', // same as in the MJML template
         },
       ],

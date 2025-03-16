@@ -8,7 +8,7 @@ import ManageProduct from './Partials/ManageProduct';
 import ManageCategories from './Partials/ManageCategories';
 import Orders from './Partials/Orders';
 import Profile from './Partials/Profile';
-
+import AdminChat from './AdminChat';
 function Admin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Dashboard');
@@ -36,6 +36,7 @@ function Admin() {
         {activeItem === 'Manage Product' && <ManageProduct />}
         {activeItem === 'Manage Categories' && <ManageCategories />}
         {activeItem === 'Orders' && <Orders />}
+        {activeItem === 'Chat' && <AdminChat />}
         {activeItem === 'Profile' && <Profile />}
       </div>
     </div>

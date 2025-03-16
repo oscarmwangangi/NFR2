@@ -26,10 +26,9 @@ function MobileHeader({
     return (
       <div className="md:hidden">
         <div className="flex justify-between items-center px-4 py-2">
-          <div className="flex items-center space-x-2">
-            <StorefrontIcon className="text-blue-600" fontSize="large" />
-            <span className="text-xl font-bold">E-Shop</span>
-          </div>
+        <div className="flex items-center ml-5 space-x-2">
+          <img src="/weblogo.png" alt="E-Shop Logo" className="h-20 w-auto" />
+        </div>
           <div className="flex items-center space-x-4">
             <AccountDropdown
               user={user}

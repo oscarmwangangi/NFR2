@@ -30,7 +30,7 @@ function Orders() {
 
   const checkSession = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/check-session", {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
         withCredentials: true,
       });
       return response.data.user;
@@ -48,7 +48,7 @@ function Orders() {
         return;
       }
 
-      const response = await axios.get("http://localhost:5000/api/orders", {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/orders`, {
         withCredentials: true,
       });
       setOrders(response.data.orders);

@@ -41,7 +41,7 @@ const CartSummary = ({
     try {
       if (paymentMethod === "order") {
         // First, insert the order with status "pending"
-        const orderResponse = await axios.post("http://localhost:5000/api/order", data, {
+        const orderResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/order`, data, {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
@@ -51,7 +51,7 @@ const CartSummary = ({
         if (orderResponse.data.success) {
           // Now initiate payment
           const paymentResponse = await axios.post(
-            "http://localhost:5000/api/initiate_payment",
+            `${process.env.REACT_APP_BACKEND_URL}/api/initiate_payment`,
             { phone, amount: total }, // Ensure phone and amount are included
             {
               headers: { "Content-Type": "application/json" },
@@ -73,7 +73,7 @@ const CartSummary = ({
         }
       } else {
         // For delivery or other payment methods, simply create order
-        const response = await axios.post("http://localhost:5000/api/order", data, {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/order`, data, {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });

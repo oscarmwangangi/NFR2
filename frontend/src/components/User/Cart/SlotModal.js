@@ -129,7 +129,7 @@ export default SlotModal;
 //   // Check session and fetch user info
 //   const checkSession = async () => {
 //     try {
-//       const res = await fetch("http://localhost:5000/api/check-session", {
+//       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
 //         method: "GET",
 //         credentials: "include",
 //       });
@@ -155,7 +155,7 @@ export default SlotModal;
 //   // Save address to DB
 //   const saveAddress = () => {
 //     axios
-//       .post("http://localhost:5000/api/delivery-address", deliveryAddress, { withCredentials: true })
+//       .post(`${process.env.REACT_APP_BACKEND_URL/api/delivery-address`, deliveryAddress, { withCredentials: true })
 //       .then((res) => {
 //         toast.success("Address updated successfully!");
 //         setShowAddressModal(false);
@@ -174,7 +174,7 @@ export default SlotModal;
 
 //     // Send the selected slot to the backend
 //     axios
-//       .post("http://localhost:5000/api/delivery-slot", {
+//       .post(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-slot`, {
 //         date: slot.date,
 //         slot: slot.slot,
 //       }, { withCredentials: true })
@@ -189,7 +189,7 @@ export default SlotModal;
 //   useEffect(() => {
 //     // Fetch saved delivery address
 //     axios
-//       .get("http://localhost:5000/api/delivery-address", { withCredentials: true })
+//       .get(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-address`, { withCredentials: true })
 //       .then((res) => {
 //         if (res.data && res.data.street) {
 //           // Update deliveryAddress state with the fetched data, including phone_number
@@ -211,7 +211,7 @@ export default SlotModal;
   
 //     // Fetch saved delivery slot
 //     axios
-//       .get("http://localhost:5000/api/delivery-slot", { withCredentials: true })
+//       .get(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-slot`, { withCredentials: true })
 //       .then((res) => {
 //         if (res.data && res.data.date && res.data.slot) {
 //           setDeliverySlot(res.data);

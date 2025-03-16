@@ -13,7 +13,7 @@ export const CartProvider = ({ children }) => {
 
   const checkSession = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/check-session", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
         method: "GET",
         credentials: "include",
       });
@@ -44,7 +44,7 @@ export const CartProvider = ({ children }) => {
 
   const fetchCart = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/cart", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart`, {
         method: "GET",
         credentials: "include",
       });
@@ -62,7 +62,7 @@ export const CartProvider = ({ children }) => {
     if (localCart) {
       const cartData = JSON.parse(localCart);
       try {
-        const res = await fetch("http://localhost:5000/api/cart/sync", {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart/sync`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -108,7 +108,7 @@ export const CartProvider = ({ children }) => {
     // If the user is logged in, update in the DB
     if (user) {
       try {
-        const res = await fetch(`http://localhost:5000/api/cart/update`, {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart/update`, {
           method: "PUT",
           credentials: "include",
           headers: {
@@ -137,7 +137,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (product, quantity) => {
     if (user) {
       try {
-        const res = await fetch("http://localhost:5000/api/cart/sync", {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart/sync`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -184,7 +184,7 @@ export const CartProvider = ({ children }) => {
   
     if (user) {
       try {
-        const res = await fetch(`http://localhost:5000/api/cart/${itemId}`, {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart/${itemId}`, {
           method: "DELETE",
           credentials: "include",
         });

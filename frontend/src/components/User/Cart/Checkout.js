@@ -47,7 +47,7 @@ const Checkout = () => {
   // Check session and fetch user info
   const checkSession = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/check-session", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
         method: "GET",
         credentials: "include",
       });
@@ -77,7 +77,7 @@ const Checkout = () => {
     const fetchData = async () => {
       try {
         // Fetch delivery address
-        const addressResponse = await axios.get("http://localhost:5000/api/delivery-address", {
+        const addressResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-address`, {
           withCredentials: true,
         });
         if (addressResponse.data) {
@@ -96,7 +96,7 @@ const Checkout = () => {
         }
 
         // Fetch delivery slot
-        const slotResponse = await axios.get("http://localhost:5000/api/delivery-slot", {
+        const slotResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-slot`, {
           withCredentials: true,
         });
         if (slotResponse.data && slotResponse.data.date && slotResponse.data.slot) {
@@ -116,7 +116,7 @@ const Checkout = () => {
   // Save address to DB
   const saveAddress = async () => {
     try {
-      await axios.post("http://localhost:5000/api/delivery-address", deliveryAddress, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-address`, deliveryAddress, {
         withCredentials: true,
       });
       toast.success("Address updated successfully!");
@@ -136,7 +136,7 @@ const Checkout = () => {
   
       // Send the selected slot to the backend
       axios
-        .post("http://localhost:5000/api/delivery-slot", {
+        .post(`${process.env.REACT_APP_BACKEND_URL}/api/delivery-slot`, {
           date: slot.date,
           slot: slot.slot,
         }, { withCredentials: true })

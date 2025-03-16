@@ -17,7 +17,7 @@ function ResetPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/forgot-password", { email });
+      const response = await axios.post(`${process.env.BACKEND_URL}/api/forgot-password`, { email });
       setIsOtpSent(true); // OTP sent, show next form
       toast.success(response.data.message);
     } catch (error) {
@@ -32,7 +32,7 @@ function ResetPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/reset-password", { email, otp, newPassword });
+      const response = await axios.post(`${process.env.BACKEND_URL}/api/reset-password`, { email, otp, newPassword });
       toast.success(response.data.message);
       setTimeout(() => {
         navigate('/login'); // Redirect after the delay

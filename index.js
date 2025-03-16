@@ -23,11 +23,8 @@ import adminChatController from './backend/controllers/adminChatController.js';
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // Create an HTTP server
-const io = new Server(server); // Initialize Socket.IO with the HTTP server
-
-// Pass the `io` object to the chat controller
-// chatController.setSocketIO(io);
+const server = http.createServer(app); 
+const io = new Server(server); 
 
 const PORT = 5000;
 
@@ -41,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Your frontend URL
+    origin: [`${process.env.FRONTEND_URL}`],
     credentials: true, // Allow cookies/session
   })
 );
@@ -111,14 +108,17 @@ app.delete('/api/brands/:id', productController.deleteBrand);
 
 // Chat routes
 app.get('/api/messages', chatController.getMessages); 
-app.get('/api/chat/contacts', chatController.getContacts); 
-app.get('/api/chat/customers', chatController.getContacts); 
 chatController.setSocketIO(io);
 
 app.get('/api/admin/chats', adminChatController.getAdminChats);
 app.get('/api/admin/messages', adminChatController.getAdminMessages);
 adminChatController.setSocketIO(io);
+app.use(express.static(path.join(__dirname, './frontend/build')));
 
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './frontend/build', 'index.html'));
+});
 // Start the server
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -47,7 +47,7 @@ function Header() {
 
   const checkSession = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/check-session", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
         method: "GET",
         credentials: "include",
       });

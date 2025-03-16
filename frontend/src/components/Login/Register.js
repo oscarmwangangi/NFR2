@@ -23,7 +23,7 @@ function Register() {
 
   const handleRegister = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/register`, values);
+      const response = await axios.post(`${process.env.BACKEND_URL}/api/register`, values);
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsOtpSent(true);
@@ -43,7 +43,7 @@ function Register() {
   const handleVerifyOtp = async (otpValue) => {
     try {
       // Ensure the form values are correctly passed
-      const response = await axios.post('http://localhost:5000/api/verify-otp', { 
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/verify-otp`, { 
         email, 
         otp: otpValue, 
         password: registrationData.password, 

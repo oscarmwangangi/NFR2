@@ -18,7 +18,7 @@ function Login() {
 
   const handleLogin = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/login", values, {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/login`, values, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -39,7 +39,7 @@ function Login() {
 
   const handleOtpVerification = async (values) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/verify-login-otp", {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/verify-login-otp`, {
         email: email,
         otp: values.otp,
       });
@@ -138,7 +138,7 @@ function Login() {
 
       <div className="mt-4 text-center">
       <button
-        onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'} // Redirect to the backend
+        onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google`} // Redirect to the backend
         className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700"
         >
         Login with Google

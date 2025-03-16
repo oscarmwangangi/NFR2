@@ -40,10 +40,17 @@ function Sidebar({ isOpen, onItemClick }) {
         </li>
         <li
           className="my-4 cursor-pointer"
+          onClick={() => onItemClick('Chat')}
+        >
+          Chat
+        </li>
+        <li
+          className="my-4 cursor-pointer"
           onClick={() => onItemClick('Profile')}
         >
           Profile
         </li>
+
       </ul>
     </div>
   );

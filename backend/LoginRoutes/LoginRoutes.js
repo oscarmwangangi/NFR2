@@ -6,6 +6,7 @@ import { OAuth2Client } from 'google-auth-library';
 import db from '../../config/db.js';  // Use ES6 import
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import dotenv from 'dotenv';
 import crypto from 'crypto'
 import { Strategy as LocalStrategy } from 'passport-local';
 const router = express.Router();
@@ -57,7 +58,7 @@ router.get('/auth/google/callback', (req, res, next) => {
   next();
 }, passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
   console.log('Google OAuth successful, redirecting to /dashboard');
-  res.redirect('http://localhost:3000');
+  res.redirect(`${process.env.FRONTEND_URL}`);
 });
 
 // Google OAuth Strategy configuration
@@ -69,7 +70,7 @@ router.get('/auth/google/callback', (req, res, next) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:5000/api/auth/google/callback'
+  callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     console.log('Google Profile:', profile);  // Log the entire profile object

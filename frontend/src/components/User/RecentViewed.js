@@ -8,7 +8,7 @@ function RecentViewed() {
   // Fetch recent viewed products from the backend
   const fetchRecentViewed = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/recent-viewed", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/recent-viewed`, {
         method: "GET",
         credentials: "include",
       });
@@ -24,7 +24,7 @@ function RecentViewed() {
   // Sync localStorage recent viewed items to the backend
   const syncLocalRecentViewed = async (localData) => {
     try {
-      const res = await fetch("http://localhost:5000/api/recent-viewed/sync", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/recent-viewed/sync`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -55,7 +55,7 @@ function RecentViewed() {
 
     // Try manual login session endpoint
     try {
-      const resManual = await fetch("http://localhost:5000/api/check-session-manual", {
+      const resManual = await fetch(`${process.env.REACT_APP_BACKEND_URL}/check-session-manual`, {
         method: "GET",
         credentials: "include",
       });
@@ -73,7 +73,7 @@ function RecentViewed() {
 
     // Fallback to Google Auth session endpoint
     try {
-      const res = await fetch("http://localhost:5000/api/check-session", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/check-session`, {
         method: "GET",
         credentials: "include",
       });

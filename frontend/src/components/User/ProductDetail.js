@@ -172,7 +172,9 @@ useEffect(() => {
       <ProductShare />
 
       {/* Product description */}
-      <ProductDescription description={product.description} />
+      <div className="max-w-[600px] mx-auto">
+  <ProductDescription description={product.description} />
+</div>
 
       {/* Recently viewed products */}
       <div className="container bg-white mx-auto py-8 p-4">
