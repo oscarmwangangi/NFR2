@@ -29,7 +29,7 @@ function DesktopHeader({
     return (
       <div className="hidden md:flex justify-between items-center px-16">
         <div className="flex items-center ml-5 space-x-2">
-          <img src="/weblogo.png" alt="E-Shop Logo" className="h-20 w-auto" />
+          <img src="/weblogo.png" alt="E-Shop Logo" className="h-16 w-auto" />
         </div>
   
         <div className="flex-1 mx-4">

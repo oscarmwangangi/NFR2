@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [`${process.env.FRONTEND_URL}`],
+    origin: ['http://localhost:3000', 'https://e78f-62-8-69-150.ngrok-free.app'],
     credentials: true, // Allow cookies/session
   })
 );
@@ -50,7 +50,7 @@ app.use(
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
-      sameSite: 'lax', // Helps with CSRF protection
+      sameSite: 'none', // Helps with CSRF protection
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
