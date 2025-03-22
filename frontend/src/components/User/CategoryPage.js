@@ -13,6 +13,9 @@ function CategoryPage() {
   const [sortBy, setSortBy] = useState("");
   const [expandedCategories, setExpandedCategories] = useState({});
 
+    useEffect(()=>{
+      window.scrollTo(0,0)
+    },[])
   // Fetch products and hierarchical categories
   useEffect(() => {
     const fetchData = async () => {

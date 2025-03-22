@@ -7,17 +7,13 @@ const BreadcrumbTrail = () => {
   const { trail } = useBreadcrumb();
 
   return (
-    <nav className="p-4 text-sm font-sans text-red-300">
+    <nav className="p-4 text-sm font-sans  text-slate-500">
       <ol className="list-reset flex flex-wrap">
         {/* Static "Home" link */}
         <li>
           <Link to="/">Home</Link>
         </li>
-        {/* Static "Product" link */}
-        {/* <li className="flex items-center">
-          <span className="mx-2">&gt;</span>
-          <Link to="/product">Product</Link>
-        </li> */}
+ 
         {/* Dynamic breadcrumb items from the trail */}
         {trail.map((item) => (
           <li key={item.id} className="flex items-center">

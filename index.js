@@ -19,6 +19,7 @@ import LoginRoutes from './backend/LoginRoutes/LoginRoutes.js';
 import cartController from './backend/controllers/cartController.js';
 import recentViewedController from './backend/controllers/recentViewedController.js';
 import adminChatController from './backend/controllers/adminChatController.js';
+import searchControllers from './backend/controllers/searchControllers.js';
 // Initialize dotenv to load environment variables
 dotenv.config();
 
@@ -85,6 +86,11 @@ app.use('/api', mpesaController);
 
 app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
+// search route
+
+
+app.get("/api/user/products/suggestions", searchControllers.userSearch);
+// 
 // Product routes
 app.post('/api/products', upload.single('image'), productController.addProduct); // Add product
 app.get('/api/products', productController.getAllProducts); // Get all products

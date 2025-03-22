@@ -90,7 +90,7 @@ const Footer = () => {
               </div>
               <h4 className="text-lg font-semibold mt-6">Payment Method</h4>
               <div className="inline-flex items-center">
-                <img src="images/M-PESA_LOGO-01.svg" alt="M-Pesa Logo" className="h-16 w-auto" />
+                <img src="/Mpesa-logo.png" alt="M-Pesa Logo" className="h-16 w-auto" />
               </div>
             </div>
           </div>
@@ -102,13 +102,13 @@ const Footer = () => {
               <h3 className="text-lg font-bold">Customer Service</h3>
               <ul className="mt-4 space-y-2">
                 <li>
-                  <a href="#" className="hover:text-red-400 text-sm">
+                  <Link to="/help" className="hover:text-red-400 text-sm">
                     Help Center
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <Link 
-                  to="chat" className="hover:text-red-400 text-sm">
+                  to="/chat" className="hover:text-red-400 text-sm">
                     Live Chat
                   </Link>
                 </li>

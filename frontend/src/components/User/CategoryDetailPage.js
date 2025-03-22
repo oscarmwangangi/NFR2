@@ -21,7 +21,9 @@ function CategoryDetailPage() {
   
   // Maximum available price among products (for slider max and display)
   const [maxAvailablePrice, setMaxAvailablePrice] = useState(10000);
-
+    useEffect(()=>{
+      window.scrollTo(0,0)
+    },[])
   // Fetch category details (with its subcategories)
   useEffect(() => {
     axios

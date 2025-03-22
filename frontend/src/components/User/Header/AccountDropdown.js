@@ -1,67 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-// import StorefrontIcon from '@mui/icons-material/Storefront';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-// import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-// import DesktopHeader from "./DesktopHeader";
-// import MobileHeader from "./MobileHeader";
-// import HelpDropdown from "./HelpDropdown";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag"; // For Orders
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; // For Saved Items
+import SettingsIcon from "@mui/icons-material/Settings"; // For Account
+import ExitToAppIcon from "@mui/icons-material/ExitToApp"; // For Logout
+import LoginIcon from "@mui/icons-material/Login"; // For Sign In
 
 function AccountDropdown({
-    user,
-    showAccountDropdown,
-    toggleAccountDropdown,
-    handleLogout,
-    isLoggingOut,
-    
-  }) {
-    return (
-      <div className="relative">
-        <button
-          onClick={toggleAccountDropdown}
-          className="flex items-center space-x-1 focus:outline-none"
-        >
-         <AccountCircleIcon />
-         <span className="hover:underline">
+  user,
+  showAccountDropdown,
+  toggleAccountDropdown,
+  handleLogout,
+  isLoggingOut,
+}) {
+  return (
+    <div className="relative">
+      {/* Account Button */}
+      <button
+        onClick={toggleAccountDropdown}
+        className="flex items-center space-x-1 focus:outline-none group"
+      >
+        <AccountCircleIcon className="text-gray-700 group-hover:text-red-500 transition-colors duration-200" />
+        <span className="text-gray-700 group-hover:text-red-500 transition-colors duration-200">
           {user ? `${user.first_name} ${user.second_name}` : "Account"}
         </span>
+      </button>
 
+      {/* Dropdown Menu */}
+      {showAccountDropdown && (
+        <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-10 account-dropdown">
+          <ul>
+            {/* Orders */}
+            <Link to="/orders">
+              <li className="px-4 py-2 flex items-center space-x-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 cursor-pointer transition-colors duration-200">
+                <ShoppingBagIcon className="text-gray-600" />
+                <span>Orders</span>
+              </li>
+            </Link>
 
+            {/* Saved Items */}
+            <li className="px-4 py-2 flex items-center space-x-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 cursor-pointer transition-colors duration-200">
+              <FavoriteBorderIcon className="text-gray-600" />
+              <span>Saved Items</span>
+            </li>
 
-</button>
-        {showAccountDropdown && (
-          <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10 account-dropdown">
-            <ul>
-          
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer"><Link to="/orders">Orders</Link></li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Saved Items</li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Account</li>
-              {user ? (
-                <>
-                  {/* <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    {user.first_name} {user.second_name}
-                  </li> */}
-                  <li
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={!isLoggingOut ? handleLogout : undefined}
-                    style={{ opacity: isLoggingOut ? 0.5 : 1 }}
-                  >
-                    {isLoggingOut ? "Logging out..." : "Logout"}
-                  </li>
-                </>
-              ) : (
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <Link to="/login" className="block w-full h-full">
-                    Sign In
-                  </Link>
+            {/* Account */}
+            <li className="px-4 py-2 flex items-center space-x-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 cursor-pointer transition-colors duration-200">
+              <SettingsIcon className="text-gray-600" />
+              <span>Account</span>
+            </li>
+
+            {/* Logout or Sign In */}
+            {user ? (
+              <li
+                className={`px-4 py-2 flex items-center space-x-2 ${
+                  !isLoggingOut
+                    ? "hover:bg-red-50 hover:text-red-600 hover:border-red-300 cursor-pointer"
+                    : "opacity-50"
+                } transition-colors duration-200`}
+                onClick={!isLoggingOut ? handleLogout : undefined}
+              >
+                <ExitToAppIcon className="text-gray-600" />
+                <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+              </li>
+            ) : (
+              <Link to="/login">
+                <li className="px-4 py-2 flex items-center space-x-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 cursor-pointer transition-colors duration-200">
+                  <LoginIcon className="text-gray-600" />
+                  <span>Sign In</span>
                 </li>
-              )}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  } export default AccountDropdown
+              </Link>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default AccountDropdown;

@@ -87,7 +87,7 @@ const ProductShare = () => (
 const ProductDescription = ({ description }) => (
   <div className="container bg-white mx-auto py-8 p-4">
     <h1 className="text-2xl font-semibold text-gray-800">Product Description</h1>
-    <p className="mt-3 text-lg text-gray-600">{description}</p>
+    <p className="mt-3 text-lg text-gray-600 max-w-[600px]">{description}</p>
   </div>
 );
 
@@ -172,9 +172,9 @@ useEffect(() => {
       <ProductShare />
 
       {/* Product description */}
-      <div className="max-w-[600px] mx-auto">
-  <ProductDescription description={product.description} />
-</div>
+      <div className=" mx-auto items-start ">
+      <ProductDescription description={product.description} />
+    </div>
 
       {/* Recently viewed products */}
       <div className="container bg-white mx-auto py-8 p-4">

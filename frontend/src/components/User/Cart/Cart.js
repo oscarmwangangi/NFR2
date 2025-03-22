@@ -1,5 +1,5 @@
 // Cart.js
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useCart } from "./CartContext";
 import { ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -35,7 +35,9 @@ function Cart() {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  
+  useEffect(()=>{
+    window.scrollTo(0,0)
+  },[])
   return (
     <div className="bg-[#f5f5f5] min-h-screen">
       <div className="container mx-auto p-6">

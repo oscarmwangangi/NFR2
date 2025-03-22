@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useEffect } from "react";
 import useApiData from './components/Api';  // Custom hook
 import AdminPage from './components/Admin/Admin.js';  
 import AdminChat from './components/Admin/AdminChat.js';  
@@ -13,9 +14,11 @@ import AllProductsPage from "./components/User/AllProductsPage"
 import CategoryPage from "./components/User/CategoryPage"
 import CategoryDetailPage from "./components/User/CategoryDetailPage"
 import Header from "./components/User/Header/Header";
+import SearchResults from "./components/User/Header/SearchResults";
 import Orders from "./components/User/Header/Orders";
 import Footer from "./components/User/Footer/Footer";
 import Chat from "./components/User/Footer/Chat";
+import Help from "./components/User/Footer/Help";
 import CategoryDetail from "./components/User/CategoryDetail.js";
 import { AuthProvider } from './components/User/AuthContext.js';
 import Cart from './components/User/Cart/Cart.js';
@@ -26,7 +29,7 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   // const data = useApiData();  // Using your custom hook (if needed)
-  
+
   return (
     <CartProvider>
       <BreadcrumbProvider> {/* Wrap your application with BreadcrumbProvider */}
@@ -38,6 +41,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/chat" element={<Chat />} />
+        
             {/* Product detail page with Header, ProductDetail, Cart, and Footer */}
             <Route
               path="/product/:id"
@@ -73,6 +77,28 @@ function App() {
                     <Header />
                   </AuthProvider>
                   <CategoryPage />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/help"
+              element={
+                <>
+                 <Header />
+                    <Help />
+                 <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <>
+                 <Header />
+                    <SearchResults />
+                 
+                 
                   <Footer />
                 </>
               }

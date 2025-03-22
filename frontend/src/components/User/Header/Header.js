@@ -2,16 +2,71 @@ import React, { useState, useEffect } from "react";
 import DesktopHeader from "./DesktopHeader";
 import MobileHeader from "./MobileHeader";
 import BreadcrumbTrail from "../BreadcrumbTrail";
-
+import { useNavigate,useLocation } from "react-router-dom";
+import axios from "axios"
 function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showHelpDropdown, setShowHelpDropdown] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
+  const navigate = useNavigate();
+  const location = useLocation();
   // Handle screen size change
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [suggestions, setSuggestions] = useState([]); // State for search suggestions
+  const [showSuggestions, setShowSuggestions] = useState(false); // State to control dropdown visibility
+
+  // Function to clear the search bar
+  const clearSearch = () => {
+    setSearchQuery(""); // Clear the search query
+    setSuggestions([]); // Clear suggestions
+    setShowSuggestions(false); // Hide the dropdown
+  };
+  // Handle search form submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+  
+
+  // Fetch search suggestions as the user types
+  const fetchSuggestions = async (query) => {
+    if (query.trim()) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/user/products/suggestions?q=${query}`
+        );
+        setSuggestions(response.data); // Set the fetched suggestions
+        setShowSuggestions(true); // Show the dropdown
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+    } else {
+      setSuggestions([]); // Clear suggestions if the query is empty
+      setShowSuggestions(false); // Hide the dropdown
+    }
+  };
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query); // Update the search query
+    fetchSuggestions(query); // Fetch suggestions
+  };
+
+  // Handle suggestion selection
+  const handleSuggestionClick = (suggestion) => {
+    // Optionally update the search input, if needed
+    setSearchQuery(suggestion.name);
+    // Hide the suggestions dropdown
+    setShowSuggestions(false);
+    // Navigate directly to the product detail page
+    navigate(`/product/${suggestion.id}`);
+  };
+  
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -80,17 +135,11 @@ function Header() {
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-    }
-  };
 
   return (
     <>
       {/* Red Bar (Not Sticky) */}
-      <div className="bg-red-500 p-3 text-white flex justify-between">
+      <div className="bg-red-500 p-2 text-white flex justify-between">
         <h1>Thank you for choosing us</h1>
         <h1>+25417544384</h1>
       </div>
@@ -109,6 +158,12 @@ function Header() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             handleSearch={handleSearch}
+        suggestions={suggestions}
+        showSuggestions={showSuggestions}
+        handleInputChange={handleInputChange}
+        handleSuggestionClick={handleSuggestionClick}
+        setSuggestions={setSuggestions}         // Pass down here if needed
+        setShowSuggestions={setShowSuggestions}
           />
         ) : (
           <DesktopHeader
@@ -122,14 +177,23 @@ function Header() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             handleSearch={handleSearch}
+          suggestions={suggestions}
+          showSuggestions={showSuggestions}
+          handleInputChange={handleInputChange}
+          handleSuggestionClick={handleSuggestionClick}
+          setSuggestions={setSuggestions}         // Pass down here if needed
+          setShowSuggestions={setShowSuggestions}
           />
         )}
       </header>
 
       {/* Rest of the page */}
-      <div className="text-white">
-        <BreadcrumbTrail />
-      </div>
+      {/* Conditionally render BreadcrumbTrail on pages other than home */}
+      {location.pathname !== "/" && (
+        <div className=" bg-[#f5f5f5]">
+          <BreadcrumbTrail />
+        </div>
+      )}
     </>
   );
 }

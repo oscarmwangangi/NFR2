@@ -13,6 +13,9 @@ function AllProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [sortBy, setSortBy] = useState('');
 
+  useEffect(() =>{
+    window.scrollTo(0,0)
+  },[])
   useEffect(() => {
     axios
     .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=Products`)
