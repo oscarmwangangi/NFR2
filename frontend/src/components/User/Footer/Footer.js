@@ -113,9 +113,9 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-red-400 text-sm">
+                  <Link to="/report" className="hover:text-red-400 text-sm">
                     Report Abuse
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -125,12 +125,12 @@ const Footer = () => {
               <h3 className="text-lg font-bold">About NFR</h3>
               <ul className="mt-4 space-y-2">
                 <li>
-                  <a href="#" className="hover:text-red-400 text-sm">
+                  <Link to="/about" className="hover:text-red-400 text-sm">
                     About Us
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-red-400 text-sm">
+                  <a href="/term" className="hover:text-red-400 text-sm">
                     Terms and Conditions
                   </a>
                 </li>

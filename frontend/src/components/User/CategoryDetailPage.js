@@ -162,11 +162,12 @@ function CategoryDetailPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4">
+    <div className="bg-[#f5f5f5]">
+    <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4 b">
       {/* Sidebar */}
-      <div className="w-full md:w-1/4 space-y-6">
+      <div className="w-full md:w-1/4 space-y-6 bg-white">
         {/* Price Range Filter */}
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-4 rounded ">
           <h3 className="text-xl font-bold mb-2">Price Range</h3>
           <div className="flex justify-between items-center mb-4">
             <div className="w-1/2 mr-2">
@@ -209,7 +210,7 @@ function CategoryDetailPage() {
             >
               {/* Selected range highlight */}
               <div
-                className="absolute h-full bg-blue-500 rounded-full"
+                className="absolute h-full bg-green-500 rounded-full"
                 style={{
                   left: `${(tempMinPrice / maxAvailablePrice) * 100}%`,
                   right: `${100 - (tempMaxPrice / maxAvailablePrice) * 100}%`,
@@ -217,7 +218,7 @@ function CategoryDetailPage() {
               ></div>
               {/* Min price thumb */}
               <div
-                className="absolute top-1/2 w-4 h-4 bg-white border-2 border-blue-500 rounded-full transform -translate-y-1/2 -translate-x-1/2 cursor-pointer"
+                className="absolute top-1/2 w-4 h-4 bg-white border-2 border-green-500 rounded-full transform -translate-y-1/2 -translate-x-1/2 cursor-pointer"
                 style={{
                   left: `${(tempMinPrice / maxAvailablePrice) * 100}%`,
                 }}
@@ -225,7 +226,7 @@ function CategoryDetailPage() {
               ></div>
               {/* Max price thumb */}
               <div
-                className="absolute top-1/2 w-4 h-4 bg-white border-2 border-blue-500 rounded-full transform -translate-y-1/2 -translate-x-1/2 cursor-pointer"
+                className="absolute top-1/2 w-4 h-4 bg-white border-2 border-green-500 rounded-full transform -translate-y-1/2 -translate-x-1/2 cursor-pointer"
                 style={{
                   left: `${(tempMaxPrice / maxAvailablePrice) * 100}%`,
                 }}
@@ -237,13 +238,13 @@ function CategoryDetailPage() {
           {/* Apply Button */}
           <button
             onClick={applyPriceFilter}
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
           >
             Apply
           </button>
         </div>
 
-        <div className="bg-white p-4 rounded shadow space-y-6">
+        <div className="bg-white p-4 rounded  space-y-6">
           {/* Subcategories Section */}
           <div>
             <h2 className="text-2xl font-bold mb-4">{category.name}</h2>
@@ -253,7 +254,7 @@ function CategoryDetailPage() {
                 placeholder="Search subcategories..."
                 value={subSearch}
                 onChange={(e) => setSubSearch(e.target.value)}
-                className="w-full px-2 py-1 border rounded"
+                className="w-full px-2 py-1 border focus:outline-none focus:border-green-500 placeholder:text-xs"
               />
             </div>
             {category.subcategories && category.subcategories.length > 0 ? (
@@ -264,10 +265,10 @@ function CategoryDetailPage() {
                       setSelectedSubcategory(null);
                       setSelectedBrands([]); // clear brand filter when changing subcategory
                     }}
-                    className={`block w-full text-left px-2 py-1 mb-1 rounded ${
+                    className={`block w-full text-left text-sm text-gray-600 px-2 py-1 mb-1 rounded-sm ${
                       !selectedSubcategory
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100"
+                        ? "bg-green-500 text-white"
+                        : "bg-slate-100"
                     }`}
                   >
                     All Subcategories
@@ -280,10 +281,10 @@ function CategoryDetailPage() {
                         setSelectedSubcategory(sub.id);
                         setSelectedBrands([]); // clear brand filter on subcategory change
                       }}
-                      className={`block w-full text-left px-2 py-1 mb-1 rounded ${
+                      className={`block w-full text-left px-2 py-1 mb-1 text-sm text-gray-600 rounded ${
                         selectedSubcategory === sub.id
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-100"
+                          ? "bg-green-500 text-white"
+                          : "bg-slate-50"
                       }`}
                     >
                       {sub.name}
@@ -315,7 +316,7 @@ function CategoryDetailPage() {
                 ))}
               </ul>
             ) : (
-              <p>
+              <p className="text-sm text-gray-600">
                 {selectedSubcategory
                   ? "No brands available for this subcategory."
                   : "Select a subcategory to view brands."}
@@ -326,19 +327,19 @@ function CategoryDetailPage() {
       </div>
 
       {/* Products Grid */}
-      <div className="w-full md:w-3/4">
+      <div className="w-full md:w-3/4 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {products && products.length > 0 ? (
             products.map((product) => (
               <Link
                 key={product.id}
                 to={`/product/${product.id}`}
-                className="border p-4 rounded hover:shadow-lg"
+                className="product-item group cursor-pointer p-4 rounded-lg hover:shadow-lg transition-all relative"
               >
                 <img
                   src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
                   alt={product.name}
-                  className="w-full h-48 object-cover mb-2"
+                  className="w-full h-48 object-cover rounded-t-lg"
                 />
                 <h3 className="text-sm font-semibold text-[#313133] truncate-text">
                   {product.name}
@@ -366,6 +367,7 @@ function CategoryDetailPage() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import cartController from './backend/controllers/cartController.js';
 import recentViewedController from './backend/controllers/recentViewedController.js';
 import adminChatController from './backend/controllers/adminChatController.js';
 import searchControllers from './backend/controllers/searchControllers.js';
+import ReportAbuseController from './backend/controllers/ReportAbuseController.js';
 // Initialize dotenv to load environment variables
 dotenv.config();
 
@@ -119,8 +120,16 @@ chatController.setSocketIO(io);
 app.get('/api/admin/chats', adminChatController.getAdminChats);
 app.get('/api/admin/messages', adminChatController.getAdminMessages);
 adminChatController.setSocketIO(io);
-app.use(express.static(path.join(__dirname, './frontend/build')));
 
+// reportabuse router
+// Routes
+app.post('/api/submit_report', upload.single('attachment'), ReportAbuseController.submitReport);
+app.get('/api/reports', ReportAbuseController.getAllReports);
+app.patch('/api/reports/:reportId', ReportAbuseController.updateReportStatus);
+app.delete('/api/reports/:reportId', ReportAbuseController.deleteReport);
+
+
+app.use(express.static(path.join(__dirname, './frontend/build')));
 // Handle React routing, return all requests to React app
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './frontend/build', 'index.html'));

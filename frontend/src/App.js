@@ -17,7 +17,10 @@ import Header from "./components/User/Header/Header";
 import SearchResults from "./components/User/Header/SearchResults";
 import Orders from "./components/User/Header/Orders";
 import Footer from "./components/User/Footer/Footer";
+import Term from "./components/User/Footer/Term";
+import AboutUs from "./components/User/Footer/AboutUs";
 import Chat from "./components/User/Footer/Chat";
+import ReportAbuse from "./components/User/Footer/ReportAbuse";
 import Help from "./components/User/Footer/Help";
 import CategoryDetail from "./components/User/CategoryDetail.js";
 import { AuthProvider } from './components/User/AuthContext.js';
@@ -103,12 +106,49 @@ function App() {
                 </>
               }
             />
+ 
             <Route
               path="/orders"
               element={
                 <>
                  <Header />
                     <Orders />
+                 
+                 
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/report"
+              element={
+                <>
+                 <Header />
+                    <ReportAbuse />
+                 
+                 
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <>
+                 <Header />
+                    <AboutUs />
+                 
+                 
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/term"
+              element={
+                <>
+                 <Header />
+                    <Term />
                  
                  
                   <Footer />

@@ -177,10 +177,6 @@ function CategoryPage() {
         {/* Sidebar */}
         <div className="w-1/4 h-fit bg-white p-4 rounded-lg shadow">
           <h3 className="text-lg font-bold mb-3">Categories</h3>
-          <ul>
-            {renderCategories(categories)}
-          </ul>
-
           <div className="border-t pt-4">
             <h3 className="text-lg font-bold mb-3">Search</h3>
             <input
@@ -243,13 +239,18 @@ function CategoryPage() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600 mt-2">
+                <div className="flex justify-between text-sm text-gray-600 my-2 border-b pb-2">
                   <span>Ksh {priceRange.min.toLocaleString()}</span>
                   <span>Ksh {priceRange.max.toLocaleString()}</span>
                 </div>
               </div>
             </div>
           </div>
+          <ul>
+            {renderCategories(categories)}
+          </ul>
+
+
         </div>
 
         {/* Products Grid */}
