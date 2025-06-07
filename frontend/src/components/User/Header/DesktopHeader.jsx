@@ -4,7 +4,8 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { FiShoppingCart,  } from "react-icons/fi";
+
 
 import MobileHeader from "./MobileHeader";
 import HelpDropdown from "./HelpDropdown";
@@ -33,9 +34,11 @@ function DesktopHeader({
   return (
     <div className="hidden md:flex justify-between items-center px-16 bg-white shadow-sm">
       {/* Logo Section */}
+      <a href="/">
       <div className="flex items-center ml-5 space-x-2">
         <img src="/weblogo.png" alt="E-Shop Logo" className="h-16 w-auto" />
       </div>
+      </a>
 
       {/* Search Bar */}
       <div className="flex-1 mx-4">
@@ -110,8 +113,9 @@ function DesktopHeader({
         />
 
         {/* Cart Icon */}
-        <Link to="/cart" className="relative flex items-center space-x-1">
-          <ShoppingCartIcon />
+        <Link to="/cart" className="relative flex items-center space-x-1 text-gray-700">
+        
+          <span className="text-gray-700 mr-3 text-xl">  <FiShoppingCart /></span>
           {cartCount > 0 && (
             <div>
           <span className="hover:underline">Cart </span>

@@ -21,8 +21,8 @@ function AccountDropdown({
         onClick={toggleAccountDropdown}
         className="flex items-center space-x-1 focus:outline-none group"
       >
-        <AccountCircleIcon className="text-gray-700 group-hover:text-red-500 transition-colors duration-200" />
-        <span className="text-gray-700 group-hover:text-red-500 transition-colors duration-200">
+        <AccountCircleIcon className="text-gray-700 transition-colors duration-200" />
+        <span className="text-gray-700  transition-colors duration-200">
           {user ? `${user.first_name} ${user.second_name}` : "Account"}
         </span>
       </button>

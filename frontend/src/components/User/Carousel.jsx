@@ -25,7 +25,7 @@ function Carousel() {
     }, []);
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=Carousel`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=29`)
       .then((res) => {
         if (Array.isArray(res.data)) {
           setCarouselProducts(res.data);
@@ -113,7 +113,7 @@ function Carousel() {
                   <img
                     src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
                     alt={product.name}
-                    className="w-full h-96 object-cover transform transition-transform duration-500 hover:scale-105"
+                    className="w-full h-96 object-cover mx-auto transform transition-transform duration-500 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-red-900/50 to-transparent flex items-end p-8">
                     <div className="text-white">

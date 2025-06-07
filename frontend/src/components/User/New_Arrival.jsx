@@ -10,7 +10,7 @@ function New_Arrival() {
   // Fetch products
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=New Arrival`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=10`)
       .then((res) => {
         setProducts(res.data);
       })

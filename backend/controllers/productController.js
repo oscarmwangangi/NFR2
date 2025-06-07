@@ -109,7 +109,7 @@ const getAllProducts = async (req, res) => {
 // Update product
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const { name, description, price, discount_price, in_stock, category, brand, size, gender, categories } = req.body;
+  const { name, description, price, discount_price, in_stock, category, brand, size, gender } = req.body;
 
   // Handle image file upload with multer
   const image_path = req.file ? `uploads/${path.basename(req.file.path)}` : null;
@@ -127,12 +127,12 @@ const updateProduct = async (req, res) => {
       size: size || null,
       gender: gender || null,
       // product_category_id: product_category_id || null,
-      categories: categories || null,
+  
   };
 
   try {
       const result = await db.execute(
-          'UPDATE products SET name = ?, description = ?, price = ?, discount_price = ?, in_stock = ?, image_path = ?, category = ?, brand = ?, size = ?, gender = ?, categories = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          'UPDATE products SET name = ?, description = ?, price = ?, discount_price = ?, in_stock = ?, image_path = ?, category = ?, brand = ?, size = ?, gender = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
           [
               values.name,
               values.description,
@@ -145,7 +145,6 @@ const updateProduct = async (req, res) => {
               values.size,
               values.gender,
               // values.product_category_id,
-              values.categories,
               productId,
           ]
       );

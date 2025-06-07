@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import 'font-awesome/css/font-awesome.min.css';
-import { useCart } from "./Cart/CartContext";
-import RecentViewed from "./RecentViewed";
-import { useBreadcrumb } from './BreadcrumbContext';
+import { useCart } from "./Cart/CartContext.jsx";
+import RecentViewed from "./RecentViewed.jsx";
+import { useBreadcrumb } from './BreadcrumbContext.jsx';
 import { calculateDiscountPercentage } from "./utils/DiscountUtlils.js"; // Import utility function
 // Component to display the product image.
 const ProductImage = ({ imagePath, name }) => (

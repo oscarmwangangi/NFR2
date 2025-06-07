@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { FiShoppingCart } from "react-icons/fi";
+
 import HelpDropdown from "./HelpDropdown";
 import AccountDropdown from "./AccountDropdown";
 import { useCart } from "../Cart/CartContext"; // Import useCart
@@ -30,10 +31,11 @@ function MobileHeader({
       {/* Top Section: Logo and Icons */}
       <div className="flex justify-between items-center px-4 py-2">
         {/* Logo */}
+        <a href="/">
         <div className="flex items-center space-x-2">
           <img src="/weblogo.png" alt="E-Shop Logo" className="h-16 w-auto" />
         </div>
-
+       </a>
         {/* Icons */}
         <div className="flex items-center space-x-4">
           {/* Account Dropdown */}
@@ -54,7 +56,7 @@ function MobileHeader({
           {/* Cart Icon */}
             {/* Cart Icon */}
             <Link to="/cart" className="relative flex items-center space-x-1">
-          <ShoppingCartIcon />
+          <span className="text-red-500 mr-3 text-xl">  <FiShoppingCart /></span>
           {cartCount > 0 && (
             <div>
           <span className="hover:underline">Cart </span>

@@ -53,13 +53,16 @@ router.get('/auth/google', (req, res, next) => {
   scope: ['profile', 'email']
 }));
 
-router.get('/auth/google/callback', (req, res, next) => {
-  console.log('Google OAuth callback...');
-  next();
-}, passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  console.log('Google OAuth successful, redirecting to /dashboard');
-  res.redirect(`${process.env.FRONTEND_URL}`);
-});
+router.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    console.log('Google OAuth successful, user:', req.user);
+    // Properly establish session before redirect
+    req.session.save(() => {
+      res.redirect(`${process.env.FRONTEND_URL}`);
+    });
+  }
+);
 
 // Google OAuth Strategy configuration
 

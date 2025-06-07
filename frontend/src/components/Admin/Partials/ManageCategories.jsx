@@ -78,10 +78,27 @@ function ManageCategories() {
     setShowCategoryForm(true);
   };
 
-  const handleDeleteCategory = (categoryId) => {
+  const handleDeleteCategory = async (categoryId) => {
     console.log('Deleting category with ID:', categoryId);
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/categories/${categoryId}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        console.log("Category deleted successfully");
+        fetchCategories(); // Refresh the category list
+      } else {
+        console.error("Failed to delete category");
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
+  
     setCategoryToDelete(null);
   };
+  
 
   const resetCategoryForm = () => {
     setNewCategory("");

@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://e78f-62-8-69-150.ngrok-free.app'],
+    origin: ['http://localhost:3000'],
     credentials: true, // Allow cookies/session
   })
 );
@@ -49,10 +49,11 @@ app.use(
   session({
     secret: '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', // Replace with a strong secret
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
+      secure: false,
       httpOnly: true,
-      sameSite: 'none', // Helps with CSRF protection
+      sameSite: 'lax', // Helps with CSRF protection
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })

@@ -7,7 +7,7 @@ function Black_Friday() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=Black Friday`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=25`)
       .then((res) => {
         setProducts(res.data);  // Store the products in the state
       })
@@ -19,8 +19,8 @@ function Black_Friday() {
   return (
     <div>
     <div className="bg-gray-900">
-    <div className="container bg-gray-900 p-4  text-gray-100 px-20 mx-auto py-12">
-      <h2 className="text-4xl font-extrabold text-left mb-8 text-red-500 animate-inch-worm">Black Friday Deal</h2>
+    <div className="container bg-gray-900 p-4  text-gray-100 mx-auto ">
+      <h2 className="text-2xl font-extrabold text-left mb-8 text-red-500 animate-inch-worm">Black Friday Deal</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
         {products.length > 0 ? (
           products.map((product) => (

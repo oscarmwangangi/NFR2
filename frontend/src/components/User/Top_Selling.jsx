@@ -7,7 +7,7 @@ function Top_Selling() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=Top Selling`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=24`)
       .then((res) => {
         setProducts(res.data);  // Store the products in the state
       })
@@ -20,14 +20,15 @@ function Top_Selling() {
     <div className="bg-white">
     <div className="container bg-white mx-auto p-4 ">
       <h2 className="text-3xl font-bold text-left mb-8 text-gray-800">Top Selling</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {products.length > 0 ? (
           products.map((product) => (
             <Link
             key={product.id}
             to={`/product/${product.id}`}  // Navigate to product detail page
+            className="product-item group cursor-pointer p-4 rounded-lg hover:shadow-lg transition-all relative"
           >
-            <div key={product.id} className="block bg-white p-4 rounded-lg relative shadow-md hover:shadow-lg transition">
+            <div key={product.id} className="">
            {/* Discount Percentage Badge */}
            {product.discount_price && (
                           <div className="absolute top-2 right-2 bg-red-500 bg-opacity-10 text-[#f5594b] text-sm font-semibold  px-2 py-1 rounded">
@@ -37,7 +38,7 @@ function Top_Selling() {
               <img
                 src={`${process.env.REACT_APP_BACKEND_URL}/${product.image_path}`}
                 alt={product.name}
-                className="w-full h-32 object-cover rounded"
+                className="w-full h-48 object-cover rounded-t-lg"
               />
               <h3 className="font-semibold text-sm text-[#313133] truncate">{product.name}</h3>
               {/* <p className="text-sm text-gray-500">{product.description}</p> */}

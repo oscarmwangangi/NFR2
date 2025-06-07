@@ -1,33 +1,34 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useEffect } from "react";
-import useApiData from './components/Api';  // Custom hook
-import AdminPage from './components/Admin/Admin.js';  
-import AdminChat from './components/Admin/AdminChat.js';  
-import ForgotPassword from './components/Login/ForgotPassword.js';
-import Login from './components/Login/Login.js';
-import Register from './components/Login/Register.js';
+import useApiData from './components/Api.js';  // Custom hook
+import AdminPage from './components/Admin/Admin.jsx';  
+import AdminChat from './components/Admin/AdminChat.jsx';  
+import ForgotPassword from './components/Login/ForgotPassword.jsx';
+import Login from './components/Login/Login.jsx';
+import Register from './components/Login/Register.jsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  
-import Nfr from "./components/User/Nfr.js";
-import ProductDetail from "./components/User/ProductDetail.js";
-import AllProductsPage from "./components/User/AllProductsPage"
-import CategoryPage from "./components/User/CategoryPage"
-import CategoryDetailPage from "./components/User/CategoryDetailPage"
-import Header from "./components/User/Header/Header";
-import SearchResults from "./components/User/Header/SearchResults";
-import Orders from "./components/User/Header/Orders";
-import Footer from "./components/User/Footer/Footer";
-import Term from "./components/User/Footer/Term";
-import AboutUs from "./components/User/Footer/AboutUs";
-import Chat from "./components/User/Footer/Chat";
-import ReportAbuse from "./components/User/Footer/ReportAbuse";
-import Help from "./components/User/Footer/Help";
-import CategoryDetail from "./components/User/CategoryDetail.js";
-import { AuthProvider } from './components/User/AuthContext.js';
-import Cart from './components/User/Cart/Cart.js';
-import { CartProvider } from './components/User/Cart/CartContext.js'; // Adjust the path as needed
-import Checkout from './components/User/Cart/Checkout.js';
-import { BreadcrumbProvider } from './components/User/BreadcrumbContext'; // Import the BreadcrumbProvider
+import Nfr from "./components/User/Nfr.jsx";
+import ProductDetail from "./components/User/ProductDetail.jsx";
+import AllProductsPage from "./components/User/AllProductsPage.jsx"
+import CategoryPage from "./components/User/CategoryPage.jsx"
+import CategoryDetailPage from "./components/User/CategoryDetailPage.jsx"
+import Header from "./components/User/Header/Header.jsx";
+import SearchResults from "./components/User/Header/SearchResults.jsx";
+import Orders from "./components/User/Header/Orders.jsx";
+import Footer from "./components/User/Footer/Footer.jsx";
+import Term from "./components/User/Footer/Term.jsx";
+import AboutUs from "./components/User/Footer/AboutUs.jsx";
+import Chat from "./components/User/Footer/Chat.jsx";
+import ReportAbuse from "./components/User/Footer/ReportAbuse.jsx";
+import Help from "./components/User/Footer/Help.jsx";
+import FAQs from "./components/User/Header/FAQS.jsx";
+import CategoryDetail from "./components/User/CategoryDetail.jsx";
+import { AuthProvider } from './components/User/AuthContext.jsx';
+import Cart from './components/User/Cart/Cart.jsx';
+import { CartProvider } from './components/User/Cart/CartContext.jsx'; // Adjust the path as needed
+import Checkout from './components/User/Cart/Checkout.jsx';
+import { BreadcrumbProvider } from './components/User/BreadcrumbContext.jsx'; // Import the BreadcrumbProvider
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -149,6 +150,18 @@ function App() {
                 <>
                  <Header />
                     <Term />
+                 
+                 
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/faqs"
+              element={
+                <>
+                 <Header />
+                    <FAQs />
                  
                  
                   <Footer />

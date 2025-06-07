@@ -17,8 +17,8 @@ function HelpDropdown({ showHelpDropdown, toggleHelpDropdown }) {
         onClick={toggleHelpDropdown}
         className="flex items-center space-x-1 focus:outline-none group"
       >
-        <HelpOutlineIcon className="text-gray-700 group-hover:text-red-500 transition-colors duration-200" />
-        <span className="text-gray-700 group-hover:text-red-500 transition-colors duration-200">
+        <HelpOutlineIcon className="text-gray-700  transition-colors duration-200" />
+        <span className="text-gray-700 transition-colors duration-200">
           Help
         </span>
       </button>
