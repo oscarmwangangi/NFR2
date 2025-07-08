@@ -162,4 +162,27 @@ router.get("/orders", isAuthenticated, async (req, res) => {
     res.status(500).json({ success: false, message: "Error fetching orders" });
   }
 });
+
+router.get('/dashboard-summary', async (req, res) => {
+  try {
+    const [revenueRow] = await db.query("SELECT SUM(total) AS totalRevenue FROM orders where status='Completed'");
+    const [ordersRow] = await db.query("SELECT COUNT(*) AS totalOrders FROM orders");
+    const [productsRow] = await db.query("SELECT SUM(JSON_LENGTH(cart_items)) AS productsSold FROM orders where status='Completed'");
+    const [pendingRow] = await db.query("SELECT COUNT(*) AS pendingOrders FROM orders where status='pending'");
+    const [activeCustomersRow] = await db.query("SELECT COUNT(*) AS activeCustomers FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+);
+
+    res.json({
+      totalRevenue: revenueRow[0].totalRevenue || 0,
+      totalOrders: ordersRow[0].totalOrders || 0,
+      productsSold: productsRow[0].productsSold || 0,
+      pendingOrders: pendingRow[0].pendingOrders || 0,
+      activeCustomers: activeCustomersRow[0].activeCustomers || 0,
+    });
+  } catch (err) {
+    console.error("Dashboard summary error:", err);
+    res.status(500).json({ error: "Failed to load dashboard data" });
+  }
+});
+
 export default router;

@@ -1,7 +1,6 @@
 // src/pages/Admin.js
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import HamburgerButton from './HamburgerButton';
 import Dashboard from './Partials/Dashboard';
 import AddProduct from './Partials/AddProduct';
 import ManageProduct from './Partials/ManageProduct';
@@ -9,6 +8,7 @@ import ManageCategories from './Partials/ManageCategories';
 import Orders from './Partials/Orders';
 import Profile from './Partials/Profile';
 import AdminChat from './AdminChat';
+
 function Admin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Dashboard');
@@ -19,16 +19,30 @@ function Admin() {
 
   const handleItemClick = (item) => {
     setActiveItem(item);
+    // Optional: Close sidebar when an item is selected on mobile
+    // if (window.innerWidth < 768) {
+    //   setIsSidebarOpen(false);
+    // }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <HamburgerButton onClick={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} onItemClick={handleItemClick} />
+    <div className="min-h-screen bg-[#1a0000] text-white font-sans relative">
+      {/* Sidebar now contains its own toggle button */}
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        toggleSidebar={toggleSidebar}
+        onItemClick={handleItemClick} 
+      />
+      
       <div
-        className={`transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-10'} p-5`}
+        className={`transition-all duration-300 ${
+          isSidebarOpen ? 'ml-64' : 'ml-0'
+        } p-5`}
       >
-        <h1 className="text-2xl font-bold">Admin Page Content</h1>
+        {/* Main content header */}
+        <div className="flex items-center mb-6">
+          <h1 className="text-2xl font-bold">{activeItem}</h1>
+        </div>
 
         {/* Dynamically render content based on the active item */}
         {activeItem === 'Dashboard' && <Dashboard />}

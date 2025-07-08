@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red Admin Dashboard</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Tailwind Dark Red Theme Customization -->
+  <style>
+    body {
+      background-color: #1a0000;
+    }
+  </style>
+</head>
+<body class="text-[#ffcccc] font-sans">
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#2a0000] p-4">
+      <h2 class="text-2xl text-white mb-6 font-bold">Dashmorce</h2>
+      <nav class="flex flex-col space-y-2">
+        <a href="#" class="bg-[#aa0000] text-white px-4 py-2 rounded">Dashboard</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Orders</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Products</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Customers</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Analytics</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Reviews</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Settings</a>
+        <a href="#" class="hover:bg-[#330000] px-4 py-2 rounded">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 space-y-6">
+      <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="bg-[#330000] p-4 rounded shadow text-white">
+          <p>Total Revenue</p>
+          <h2 class="text-xl font-bold">₦3.750</h2>
+        </div>
+        <div class="bg-[#330000] p-4 rounded shadow text-white">
+          <p>Total Orders</p>
+          <h2 class="text-xl font-bold">1.230</h2>
+        </div>
+        <div class="bg-[#330000] p-4 rounded shadow text-white">
+          <p>Active Customers</p>
+          <h2 class="text-xl font-bold">320</h2>
+        </div>
+        <div class="bg-[#330000] p-4 rounded shadow text-white">
+          <p>Products Sold</p>
+          <h2 class="text-xl font-bold">850</h2>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-2 gap-6">
+        <!-- Sales Line Chart -->
+        <div class="bg-[#330000] p-4 rounded text-white">
+          <h3 class="text-lg font-semibold mb-2">Sales Overview</h3>
+          <canvas id="salesChart" class="w-full h-32"></canvas>
+        </div>
+
+        <!-- Orders by Category Pie Chart -->
+        <div class="bg-[#330000] p-4 rounded text-white">
+          <h3 class="text-lg font-semibold mb-2">Orders by Category</h3>
+          <canvas id="categoryChart" class="w-full h-32"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    // Sales Overview Line Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+      type: 'line',
+      data: {
+        labels: ['Mar 1', 'Mar 2', 'Mar 3', 'Mar 4', 'Mar 5', 'Mar 6', 'Mar 7'],
+        datasets: [{
+          label: 'Sales',
+          data: [50, 60, 55, 70, 80, 75, 100],
+          borderColor: '#ff3d3d',
+          backgroundColor: 'rgba(255, 61, 61, 0.2)',
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#ffcccc' }, grid: { color: '#800000' }},
+          y: { ticks: { color: '#ffcccc' }, grid: { color: '#800000' }}
+        }
+      }
+    });
+
+    // Orders by Category Doughnut Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Electronics', 'Fashion', 'Home'],
+        datasets: [{
+          label: 'Orders',
+          data: [40, 30, 30],
+          backgroundColor: ['#ff3333', '#cc0000', '#800000'],
+          borderColor: '#1a0000',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: { color: '#ffcccc' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

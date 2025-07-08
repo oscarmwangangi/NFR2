@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import useApiData from './components/Api.js';  // Custom hook
 import AdminPage from './components/Admin/Admin.jsx';  
 import AdminChat from './components/Admin/AdminChat.jsx';  
+import AdminLoginPage from './components/Admin/AdminLogins/AdminLoginPage.jsx';  
 import ForgotPassword from './components/Login/ForgotPassword.jsx';
 import Login from './components/Login/Login.jsx';
 import Register from './components/Login/Register.jsx';
@@ -243,7 +244,18 @@ function App() {
                 </>
               }
             />
+            <Route
+              path="admin/login"
+              element={
+                <>
+                  {/* <Header /> */}
+                  <AdminLoginPage />
+                  {/* <Footer /> */}
+                </>
+              }
+            />
           </Routes>
+          
         </Router>
        
       </BreadcrumbProvider>

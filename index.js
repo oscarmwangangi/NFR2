@@ -6,6 +6,7 @@ import passport from 'passport';
 import productController from './backend/controllers/productController.js';
 import deliveryRoutes from './backend/controllers/deliveryRoutes.js';
 import orderController from './backend/controllers/orderController.js';
+import dashboardController from './backend/controllers/dashboardController.js';
 import mpesaController from './backend/controllers/mpesaController.js';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -83,6 +84,7 @@ app.use('/api', LoginRoutes);
 app.use('/api', deliveryRoutes);
 app.use('/api', cartController);
 app.use('/api', orderController);
+app.use('/api', dashboardController);
 app.use('/api', recentViewedController);
 app.use('/api', mpesaController);
 

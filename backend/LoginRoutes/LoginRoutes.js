@@ -64,12 +64,6 @@ router.get('/auth/google/callback',
   }
 );
 
-// Google OAuth Strategy configuration
-
-
-
-
-
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -98,6 +92,7 @@ passport.use(new GoogleStrategy({
         'INSERT INTO users (email, google_id, first_name, second_name, password, email_verified, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', 
         [email, id, given_name, family_name, null, true, new Date()]
       );
+      await db.query("UPDATE users SET last_login = NOW() WHERE id = ?", [user.id]);
 
       // Fetch the newly inserted user using the insertId
       const [newUser] = await db.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
@@ -349,6 +344,8 @@ router.post('/verify-login-otp', async (req, res, next) => {
           user: req.session.user, // Send user data in response
           message: "OTP verified successfully. You are now logged in.",
         });
+        await db.query("UPDATE users SET last_login = NOW() WHERE id = ?", [user.id]);
+
       } catch (error) {
         console.error("Error during session save or OTP deletion:", error);
         return next(error);

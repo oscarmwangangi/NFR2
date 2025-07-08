@@ -122,6 +122,36 @@ router.post('/cart/sync', async (req, res) => {
     }
   });
   
+// GET /admin/cart-summary
+router.get('/admin/cart-summary', async (req, res) => {
+  try {
+    const [cartItems] = await db.query(`
+      SELECT 
+        SUM(quantity) AS totalItems,
+        COUNT(DISTINCT user_id) AS activeCarts
+      FROM cart_items
+    `);
+
+    const [topProducts] = await db.query(`
+      SELECT 
+        p.name, SUM(ci.quantity) as totalQuantity
+      FROM cart_items ci
+      JOIN products p ON ci.product_id = p.id
+      GROUP BY ci.product_id
+      ORDER BY totalQuantity DESC
+      LIMIT 5
+    `);
+
+    res.json({
+      totalItems: cartItems[0].totalItems || 0,
+      activeCarts: cartItems[0].activeCarts || 0,
+      topProducts,
+    });
+  } catch (err) {
+    console.error("Cart summary fetch error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 
