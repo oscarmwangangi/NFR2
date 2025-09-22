@@ -6,7 +6,7 @@ import {
 import CustomTooltip from './CustomTooltip.jsx';
 const COLORS = ['#ff3333', '#cc0000', '#800000', '#4d0000'];
 
-export default function PieChartData() {
+export default function PieChartData({data}) {
   const [summary, setSummary] = useState({
     totalRevenue: 0,
     totalOrders: 0,
@@ -124,42 +124,40 @@ return (
 
         {/* Order Status Pie Chart */}
         <div className="h-[300px]">
-          {statusChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={statusChartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}  // Increased inner radius
-                  outerRadius={80}
-                  paddingAngle={2}   // Reduced padding
-                  dataKey="value"
-                  label={({ percent }) => `${(percent * 100).toFixed(0)}%`} // Simpler label
-                  labelLine={false}
-                  stroke="none"
-                >
-                  {statusChartData.map((entry, index) => (
-                    <Cell key={`status-cell-${index}`} fill={getStatusColor(entry.name)} />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  layout="horizontal"  // Changed to horizontal
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{
-                    color: '#ffcccc',
-                    paddingTop: '20px'  // Added padding
-                  }}
-                  formatter={(value, entry, index) => (
-                    <span className="text-[#ffcccc] text-xs">
-                      {statusChartData[index].name}
-                    </span>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+          {statusChartData.length > 0 && statusChartData.some(item => item.value > 0) ?  (
+          <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                    stroke="none"
+                  >
+                    {statusChartData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={getStatusColor(entry.name)} />
+        ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend 
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    wrapperStyle={{
+                      color: '#ffcccc',
+                      paddingTop: '20px'
+                    }}
+                    formatter={(value, entry) => (
+                      <span className="text-[#ffcccc] text-xs">{entry.value}</span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
           ) : (
             <div className="flex items-center justify-center h-full text-[#ff9999]">
               Loading order status data...

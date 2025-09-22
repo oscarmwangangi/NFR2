@@ -126,7 +126,7 @@ function ManageCategories() {
 
   return (
     <div className="p-6">
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8 text-black">
         <h2 className="text-2xl font-semibold mb-6">Category Management</h2>
         <div className="flex float-right items-center space-x-4">
           <input

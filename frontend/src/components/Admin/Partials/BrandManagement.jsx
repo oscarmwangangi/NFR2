@@ -76,7 +76,7 @@ function ManageBrands({ categories }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-md p-6 text-black">
       <h2 className="text-2xl font-semibold mb-4">Brand Management</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">

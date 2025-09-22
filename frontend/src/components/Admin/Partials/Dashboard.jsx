@@ -12,6 +12,7 @@ import {
 import SearchAndFilter from './DashboardComponents/SearchAndFilter';
 import SummaryCard from './DashboardComponents/SummaryCard';
 import SalesChart from './DashboardComponents/SalesChart';
+import BarChartData from './DashboardComponents/BarChartData';
 
 const COLORS = ['#ff3333', '#cc0000', '#800000', '#4d0000'];
 
@@ -58,30 +59,16 @@ export default function Dashboard() {
         setRecentOrders(ordersRes.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+        
       }
     };
 
     fetchData();
   }, []);
 
-  // Prepare chart data
-  const salesChartData = useMemo(() => salesData.map(d => ({
-    date: new Date(d.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' }),
-    sales: parseFloat(d.sum)
-  })), [salesData]);
-
-  const growthChartData = useMemo(() => growthData.map(d => ({
-    date: d.date,
-    users: Number(d.count) || 0
-  })), [growthData]);
-
-  const categoryChartData = useMemo(() => Object.keys(orderCats).map(key => ({
-    name: key,
-    value: orderCats[key]
-  })), [orderCats]);
 
   // Filter recent orders
-  const filteredOrders = useMemo(() => {
+   const filteredOrders = useMemo(() => {
     let filtered = [...recentOrders];
     
     // Apply search filter
@@ -120,6 +107,51 @@ export default function Dashboard() {
     return filtered;
   }, [recentOrders, searchQuery, dateFilter]);
 
+  const growthChartData = useMemo(() => {
+  if (!filteredOrders || filteredOrders.length === 0) return [];
+
+  // Group filtered orders by date
+  const countsByDate = filteredOrders.reduce((acc, order) => {
+    const date = new Date(order.delivery_date).toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short'
+    });
+
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Convert grouped data to array for recharts
+  return Object.keys(countsByDate).map(date => ({
+    date,
+    users: countsByDate[date] // number of orders/users on that date
+  }));
+}, [filteredOrders]);
+
+  const salesChartData = useMemo(() => 
+  filteredOrders.map(d => ({
+    date: new Date(d.delivery_date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' }),
+    sales: parseFloat(d.total)
+    
+  })), 
+  console.log("Filtered order example:", filteredOrders[0]),
+  [filteredOrders]
+);
+const categoryChartData = useMemo(() => {
+  // Group filteredOrders by status (or category)
+  const counts = filteredOrders.reduce((acc, order) => {
+    const key = order.status || "Unknown"; 
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Convert object into recharts format
+  return Object.entries(counts).map(([name, value]) => ({
+    name,
+    value,
+  }));
+}, [filteredOrders]);
+
   return (
     <div className="bg-[#1a0000] min-h-screen text-[#ffcccc] p-4">
       {/* Top Navigation */}
@@ -147,73 +179,54 @@ export default function Dashboard() {
 
       {/* Summary Cards Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
+        {filteredOrders.length > 0 ? (
+              <>   
         <SummaryCard 
           title="Total Revenue" 
-          value={`KSh ${summary.totalRevenue.toLocaleString()}`} 
+          value={`KSh ${summary.totalRevenue.toLocaleString() || "0"}`} 
           icon={<DollarSign size={20} className="text-[#ff3d3d]" />}
           color="border-l-4 border-[#ff3d3d]"
         />
+        
         <SummaryCard 
-          title="Total Orders" 
-          value={summary.totalOrders} 
+          title="Total Orders"  
+          value={summary.totalOrders ?? "0"} 
           icon={<ShoppingCart size={20} className="text-[#ffcc00]" />}
           color="border-l-4 border-[#ffcc00]"
         />
         <SummaryCard 
           title="Products Sold" 
-          value={summary.productsSold} 
+          value={summary.productsSold ?? "0"} 
           icon={<Package size={20} className="text-[#00cc66]" />}
           color="border-l-4 border-[#00cc66]"
         />
         <SummaryCard 
           title="Pending Orders" 
-          value={summary.pendingOrders} 
+          value={summary.pendingOrders ?? "0"} 
           icon={<Clock size={20} className="text-[#ff9966]" />}
           color="border-l-4 border-[#ff9966]"
         />
         <SummaryCard 
           title="Active Customers" 
-          value={summary.activeCustomers} 
+          value={summary.activeCustomers ?? "0"} 
           icon={<UserPlus size={20} className="text-[#9966ff]" />}
           color="border-l-4 border-[#9966ff]"
         />
+        </>
+         ) : (
+                          
+        'No matching results found'
+                          
+                        )}
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <SalesChart data={salesChartData} />
+        <SalesChart  data={salesChartData} />
         
 <PieChartData data={categoryChartData} />
-        <div className="bg-[#330000] p-6 rounded-lg">
-          <h3 className="text-white mb-4 font-semibold">Customer Growth</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={growthChartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#550000" />
-              <XAxis 
-                dataKey="date" 
-                tick={{ fill: '#ffcccc' }}
-                stroke="#ffcccc"
-              />
-              <YAxis 
-                tick={{ fill: '#ffcccc' }}
-                stroke="#ffcccc"
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: '#330000',
-                  borderColor: '#550000',
-                  color: '#ffcccc'
-                }}
-              />
-              <Bar
-                dataKey="users"
-                name="New Users"
-                fill="#ffcc00"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+
+<BarChartData data={growthChartData} />
 
         <div className="bg-[#330000] p-6 rounded-lg">
           <h3 className="text-white mb-4 font-semibold">Recent Orders ({filteredOrders.length})</h3>
