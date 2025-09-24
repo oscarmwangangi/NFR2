@@ -39,6 +39,7 @@ function App() {
     <CartProvider>
       <BreadcrumbProvider> {/* Wrap your application with BreadcrumbProvider */}
       {/* <ToastContainer></ToastContainer> */}
+        <AuthProvider>
         <Router>
           <Routes>
             <Route path="/forgotpassword" element={<ForgotPassword />} />
@@ -121,6 +122,7 @@ function App() {
                 </>
               }
             />
+          
             <Route
               path="/report"
               element={
@@ -257,7 +259,7 @@ function App() {
           </Routes>
           
         </Router>
-       
+         </AuthProvider>
       </BreadcrumbProvider>
     </CartProvider>
   );

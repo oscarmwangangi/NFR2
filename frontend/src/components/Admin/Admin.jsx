@@ -41,7 +41,7 @@ function Admin() {
       >
         {/* Main content header */}
         <div className="flex items-center mb-6">
-          <h1 className="text-2xl font-bold">{activeItem}</h1>
+          <h1 className="text-2xl font-bold p-8">{activeItem}</h1>
         </div>
 
         {/* Dynamically render content based on the active item */}

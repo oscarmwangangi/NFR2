@@ -23,7 +23,7 @@ function Register() {
 
   const handleRegister = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post(`${process.env.BACKEND_URL}/api/register`, values);
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, values);
       if (response.status === 200) {
         toast.success(response.data.message);
         setIsOtpSent(true);

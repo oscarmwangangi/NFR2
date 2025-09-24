@@ -19,6 +19,45 @@ function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
 }
 
+async function createOrUpdateOTP(email) {
+  const otp = generateOTP();
+  const expiresAt = Date.now() + 2 * 60 * 1000; // 2 minutes expiry
+
+  // Kill old OTPs
+  await db.query("DELETE FROM otp_verification WHERE email = ?", [email]);
+
+  // Insert new one
+  await db.query(
+    "INSERT INTO otp_verification (email, otp, expires_at) VALUES (?, ?, ?)",
+    [email, otp, expiresAt]
+  );
+
+  return otp;
+}
+// async function verifyOTP(email, otp) {
+//   const [rows] = await db.query(
+//     "SELECT * FROM otp_verification WHERE email = ?",
+//     [email]
+//   );
+
+//   if (rows.length === 0) return { success: false, message: "OTP not found" };
+
+//   const record = rows[0];
+
+//   if (Date.now() > record.expires_at) {
+//     await db.query("DELETE FROM otp_verification WHERE email = ?", [email]);
+//     return { success: false, message: "OTP expired" };
+//   }
+
+//   if (record.otp !== otp) {
+//     return { success: false, message: "Invalid OTP" };
+//   }
+
+//   // OTP is valid → kill it immediately
+//   await db.query("DELETE FROM otp_verification WHERE email = ?", [email]);
+//   return { success: true, message: "OTP verified" };
+// }
+
 // Create a transporter for sending OTP email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -156,14 +195,7 @@ router.post('/register', async (req, res) => {
         return res.status(400).send({ message: 'Email is already registered' });
       }
   
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // Generate OTP
-      const otp = Math.floor(100000 + Math.random() * 900000);  // 6-digit OTP
-  
-      // Store OTP temporarily in the otp_verification table
-      await db.query('INSERT INTO otp_verification (email, otp) VALUES (?, ?)', [email, otp]);
+     const otp = await createOrUpdateOTP(email);
   
       // Send OTP to user's email using nodemailer
       const transporter = nodemailer.createTransport({
@@ -248,18 +280,22 @@ passport.use(
     { usernameField: 'email' },
     async (email, password, done) => {
       try {
-        const [user] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+        const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
-        if (user.length === 0) {
+        // If no user found
+        if (!rows || rows.length === 0) {
           return done(null, false, { message: "Invalid email or password" });
         }
 
-        const isMatch = await bcrypt.compare(password, user[0].password);
+        const user = rows[0];
+
+        // If user found, compare password
+        const isMatch = await bcrypt.compare(password, user.password || "");
         if (!isMatch) {
           return done(null, false, { message: "Invalid email or password" });
         }
 
-        return done(null, user[0]);
+        return done(null, user);
       } catch (error) {
         return done(error);
       }
@@ -267,26 +303,23 @@ passport.use(
   )
 );
 
+
 // POST route to handle login
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', async (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(400).send({ message: info.message });
-    }
+    if (err) return next(err);
+    if (!user) return res.status(400).send({ message: info.message });
 
     try {
-      // Generate OTP and save to the database
-      const otp = generateOTP();
-      await db.query("INSERT INTO otp_verification (email, otp) VALUES (?, ?)", [user.email, otp]);
+      // Generate new OTP and invalidate old ones
+      const otp = await createOrUpdateOTP(user.email);
 
-      // Send OTP email
+      // Send OTP
       await sendOTPEmail(user.email, otp);
 
-      // Respond with a message indicating OTP has been sent
-      res.status(200).send({ message: "Login successful. Please check your email for the OTP." });
+      res.status(200).send({
+        message: "Login successful. Please check your email for the OTP.",
+      });
     } catch (error) {
       console.error("OTP generation error:", error);
       res.status(500).send({ message: "Server error" });
