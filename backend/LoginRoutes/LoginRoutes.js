@@ -62,8 +62,8 @@ async function createOrUpdateOTP(email) {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'mwangangioscar2016@gmail.com',
-      pass: 'sffw rcvv fcyr iqtz'
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
   }
 });
 
@@ -201,8 +201,8 @@ router.post('/register', async (req, res) => {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'mwangangioscar2016@gmail.com',
-          pass: 'sffw rcvv fcyr iqtz'
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
         }
       });
   
@@ -398,7 +398,7 @@ router.post('/verify-login-otp', async (req, res, next) => {
 // Send OTP and store it in the otp_verification table
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
-
+  const expiresAt = Date.now() + 2 * 60 * 1000;
   if (!email) {
     return res.status(400).send({ message: 'Email is required' });
   }
@@ -418,10 +418,10 @@ router.post('/forgot-password', async (req, res) => {
 
     if (existingOtp.length > 0) {
       // Update OTP if entry already exists
-      await db.query('UPDATE otp_verification SET otp = ? WHERE email = ?', [otp, email]);
+      await db.query('UPDATE otp_verification SET otp = ? WHERE email = ?', [otp, email, expiresAt]);
     } else {
       // Insert OTP if it's a new entry
-      await db.query('INSERT INTO otp_verification (email, otp) VALUES (?, ?)', [email, otp]);
+      await db.query('INSERT INTO otp_verification (email, otp, expires_at) VALUES (?, ?, ?)', [email, otp,expiresAt]);
     }
 
     // Send OTP to email
@@ -504,6 +504,18 @@ router.get('/check-session-manual', (req, res) => {
 //   }
 // });
 
+// api/users/last-logins
+router.get("/last-logins", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, first_name, second_name, last_login FROM users WHERE last_login IS NOT NULL"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching users last login:", err);
+    res.status(500).json({ error: "Failed to load user growth data" });
+  }
+});
 
 router.get('/logout', (req, res, next) => {
   req.logout((err) => {

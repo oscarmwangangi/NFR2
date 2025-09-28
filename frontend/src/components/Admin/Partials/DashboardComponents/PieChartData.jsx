@@ -68,13 +68,15 @@ export default function PieChartData({data}) {
   
   const getStatusColor = (status) => {
     const colorMap = {
-      'Completed': '#4CAF50',
-      'Processing': '#2196F3',
-      'Pending': '#FFC107',
-      'Cancelled': '#F44336',
-      'Refunded': '#9E9E9E',
-      'Shipped': '#673AB7',
-      'Delivered': '#009688',
+
+  'Completed': '#10B981',    // Brighter green - better contrast
+  'Processing': '#3B82F6',   // Deeper blue - more professional
+  'Pending': '#F59E0B',      // Amber-600 - better visibility
+  'Cancelled': '#EF4444',    // Red-500 - more modern red
+  'Refunded': '#6B7280',     // Gray-500 - better neutral
+  'Shipped': '#8B5CF6',      // Violet-500 - more vibrant
+  'Delivered': '#06B6D4',    // Cyan-500 - distinct from green
+
     };
     return colorMap[status] || '#607D8B'; // default color
   };

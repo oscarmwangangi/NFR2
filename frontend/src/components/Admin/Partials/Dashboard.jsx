@@ -37,18 +37,20 @@ export default function Dashboard() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
+  const [users, setUsers] = useState([]);
 
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [summaryRes, cartRes, categoriesRes, salesRes, growthRes, ordersRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard-summary`, { withCredentials: true }),
+        const [summaryRes, cartRes, categoriesRes, salesRes, growthRes, ordersRes,userRes] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard-summary`, { withCredentials: true }), 
           axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/cart-summary`, { withCredentials: true }),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/order-categories`),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/sales-data`),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/customer-growth`),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/recent-orders`)
+          ,axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/last-logins`, { withCredentials: true })
         ]);
 
         setSummary(summaryRes.data);
@@ -57,6 +59,8 @@ export default function Dashboard() {
         setSalesData(salesRes.data);
         setGrowthData(growthRes.data);
         setRecentOrders(ordersRes.data);
+        setUsers(userRes.data); 
+        
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         
@@ -107,36 +111,78 @@ export default function Dashboard() {
     return filtered;
   }, [recentOrders, searchQuery, dateFilter]);
 
-  const growthChartData = useMemo(() => {
-  if (!filteredOrders || filteredOrders.length === 0) return [];
 
-  // Group filtered orders by date
-  const countsByDate = filteredOrders.reduce((acc, order) => {
-    const date = new Date(order.delivery_date).toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: 'short'
+const growthChartData = useMemo(() => {
+  if (!users || users.length === 0) return [];
+
+  const countsByMonth = users.reduce((acc, user) => {
+    if (!user.last_login) return acc;
+    const date = new Date(user.last_login);
+    if (isNaN(date)) return acc;
+
+    const monthKey = date.toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric',
     });
 
-    acc[date] = (acc[date] || 0) + 1;
+    acc[monthKey] = (acc[monthKey] || 0) + 1;
     return acc;
   }, {});
 
-  // Convert grouped data to array for recharts
-  return Object.keys(countsByDate).map(date => ({
-    date,
-    users: countsByDate[date] // number of orders/users on that date
+  return Object.keys(countsByMonth).map(month => ({
+    date: month,
+    users: countsByMonth[month],
+  }));
+}, [users]);
+
+// Orders by delivery_date (grouped by month)
+const ordersByDeliveryDate = useMemo(() => {
+  if (!filteredOrders || filteredOrders.length === 0) return [];
+
+  const countsByMonth = filteredOrders.reduce((acc, order) => {
+    if (!order.delivery_date) return acc;
+    const date = new Date(order.delivery_date);
+    if (isNaN(date)) return acc;
+
+    const monthKey = date.toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric',
+    });
+
+    acc[monthKey] = (acc[monthKey] || 0) + 1;
+    return acc;
+  }, {});
+
+  return Object.keys(countsByMonth).map(month => ({
+    date: month,
+    orders: countsByMonth[month],
   }));
 }, [filteredOrders]);
 
-  const salesChartData = useMemo(() => 
-  filteredOrders.map(d => ({
-    date: new Date(d.delivery_date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric' }),
-    sales: parseFloat(d.total)
-    
-  })), 
-  console.log("Filtered order example:", filteredOrders[0]),
-  [filteredOrders]
-);
+// Sales chart (sum sales by month instead of daily raw values)
+const salesChartData = useMemo(() => {
+  if (!filteredOrders || filteredOrders.length === 0) return [];
+
+  const salesByMonth = filteredOrders.reduce((acc, order) => {
+    if (!order.delivery_date || !order.total) return acc;
+    const date = new Date(order.delivery_date);
+    if (isNaN(date)) return acc;
+
+    const monthKey = date.toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric',
+    });
+
+    acc[monthKey] = (acc[monthKey] || 0) + parseFloat(order.total);
+    return acc;
+  }, {});
+
+  return Object.keys(salesByMonth).map(month => ({
+    date: month,
+    sales: salesByMonth[month],
+  }));
+}, [filteredOrders]);
+
 const categoryChartData = useMemo(() => {
   // Group filteredOrders by status (or category)
   const counts = filteredOrders.reduce((acc, order) => {
@@ -226,7 +272,11 @@ const categoryChartData = useMemo(() => {
         
 <PieChartData data={categoryChartData} />
 
-<BarChartData data={growthChartData} />
+
+  <BarChartData data={growthChartData} title="Customer Growth (last_login)" dataKey="users" barColor="#ffcc00" />
+  <BarChartData data={ordersByDeliveryDate} title="Orders by Delivery Date" dataKey="orders" barColor="#33ccff" />
+
+
 
         <div className="bg-[#330000] p-6 rounded-lg">
           <h3 className="text-white mb-4 font-semibold">Recent Orders ({filteredOrders.length})</h3>
@@ -250,13 +300,18 @@ const categoryChartData = useMemo(() => {
                       <td>{new Date(order.delivery_date).toLocaleDateString()}</td>
                       <td>KSh {order.total}</td>
                       <td>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          order.status === 'pending' 
-                            ? 'bg-yellow-900 text-yellow-300' 
-                            : 'bg-green-900 text-green-300'
-                        }`}>
-                          {order.status}
-                        </span>
+<span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+    order.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+    order.status === 'Processing' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+    order.status === 'Shipped' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+    order.status === 'Delivered' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+    order.status === 'Completed' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' :
+    order.status === 'Cancelled' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+    order.status === 'Refunded' ? 'bg-gray-500/20 text-gray-300 border border-gray-500/30' :
+    'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+  }`}>
+    {order.status}
+  </span>
                       </td>
                     </tr>
                   ))

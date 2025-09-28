@@ -400,7 +400,7 @@ const AdminChat = () => {
                   onKeyPress={() =>
                     socket.emit("admin_typing", { chatId: activeChat.id })
                   }
-                  className="flex-1 border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="flex-1 text-black border rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Type your reply..."
                 />
                 <button

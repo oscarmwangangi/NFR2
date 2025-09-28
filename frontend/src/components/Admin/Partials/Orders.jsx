@@ -16,8 +16,8 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/orders`);
-      const data = await response.json();
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/orders`);
+      const data = response.data
       if (data.success) {
         setOrders(data.orders);
       }
@@ -38,11 +38,12 @@ function Orders() {
 
   const getStatusBadge = (status) => {
     const statusColors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      shipped: 'bg-purple-100 text-purple-800',
-      delivered: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800'
+      Pending: 'bg-yellow-100 text-yellow-800',
+      Confirmed: 'bg-blue-100 text-blue-800',
+      Shipped: 'bg-purple-100 text-purple-800',
+      Delivered: 'bg-green-100 text-green-800',
+      Cancelled: 'bg-red-100 text-red-800',
+      Completed: 'bg-green-100 text-green-800',
     };
     
     return (
@@ -65,7 +66,7 @@ function Orders() {
 
   const handleUpdateStatus = async (newStatus) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/orders/${selectedOrder.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/orders/${selectedOrder.order_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -256,11 +257,12 @@ function Orders() {
                         onChange={(e) => handleUpdateStatus(e.target.value)}
                         className="bg-[#2a0a0a] border border-[#3a1a1a] rounded px-3 py-2 text-white"
                       >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>                        <option value="Completed">Completed</option>
+
                       </select>
                     </div>
                   </div>

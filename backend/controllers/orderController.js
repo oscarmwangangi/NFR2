@@ -160,8 +160,38 @@ router.get("/orders", isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error("Error fetching orders:", error);
     res.status(500).json({ success: false, message: "Error fetching orders" });
+  }});
+  
+// Admin: view all orders
+router.get("/admin/orders", async (req, res) => {
+  try {
+    const [orders] = await db.query("SELECT * FROM orders");
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    res.status(500).json({ success: false, message: "Error fetching all orders" });
   }
 });
+
+// Admin: update order status
+router.put("/admin/orders/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const [result] = await db.query("UPDATE orders SET status = ? WHERE order_id = ?", [status, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    res.json({ success: true, message: "Order status updated" });
+  } catch (error) {
+    console.error("Error updating order:", error);
+    res.status(500).json({ success: false, message: "Error updating order" });
+  }
+});
+
 
 router.get('/dashboard-summary', async (req, res) => {
   try {
