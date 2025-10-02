@@ -9,7 +9,7 @@ function Products() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?category=28`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/products?categories=28`)
       .then((res) => {
         setProducts(res.data);
       })

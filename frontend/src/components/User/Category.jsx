@@ -29,7 +29,7 @@ function Category() {
               return (
                 <Link
                   key={category.id}
-                  to={`/categories/${category.id}`}
+                  to={`/category/${category.id}`}
                   className="block relative overflow-hidden rounded-lg bg-[#f4f4f4] shadow-lg transition-transform duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl"
                 >
                   <img
