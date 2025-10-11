@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: true,
     credentials: true, // Allow cookies/session
   })
 );
@@ -52,9 +52,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,
+      secure: true,
       httpOnly: true,
-      sameSite: 'lax', // Helps with CSRF protection
+      sameSite: 'none',
+      // sameSite: 'lax', // Helps with CSRF protection
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
